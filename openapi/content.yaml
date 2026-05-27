@@ -174,6 +174,277 @@ paths:
       responses:
         '200':
           description: No response body
+  /api/v1/bulletin-configs:
+    get:
+      operationId: bulletin_configs_list
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: List bulletin configs
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Bulletin Configs
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBulletinConfigList'
+              examples:
+                MorningTV:
+                  value:
+                    next: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+                    previous: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+                    results:
+                    - id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: Morning TV Bulletin
+                      platform: television
+                      slot: morning
+                      studio: Studio A
+                      slot_duration: 00:30:00
+                      is_active: true
+                  summary: Morning TV
+          description: ''
+    post:
+      operationId: bulletin_configs_create
+      description: Create a new {self.verbose_name}
+      summary: Create bulletin config
+      tags:
+      - Bulletin Configs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulletinConfigRequest'
+            examples:
+              MorningTV:
+                value:
+                  name: Morning TV Bulletin
+                  platform: television
+                  slot: morning
+                  studio: Studio A
+                  slot_duration: 00:30:00
+                  is_active: true
+                summary: Morning TV
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BulletinConfigRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BulletinConfigRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulletinConfig'
+              examples:
+                MorningTV:
+                  value:
+                    id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                    name: Morning TV Bulletin
+                    platform: television
+                    slot: morning
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    is_active: true
+                  summary: Morning TV
+          description: ''
+  /api/v1/bulletin-configs/{id}:
+    get:
+      operationId: bulletin_configs_retrieve
+      description: Retrieve a {self.verbose_name}
+      summary: Get bulletin config
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this bulletin config.
+        required: true
+      tags:
+      - Bulletin Configs
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulletinConfig'
+              examples:
+                MorningTV:
+                  value:
+                    id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                    name: Morning TV Bulletin
+                    platform: television
+                    slot: morning
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    is_active: true
+                  summary: Morning TV
+          description: ''
+    put:
+      operationId: bulletin_configs_update
+      description: Update a {self.verbose_name}
+      summary: Update bulletin config
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this bulletin config.
+        required: true
+      tags:
+      - Bulletin Configs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulletinConfigRequest'
+            examples:
+              MorningTV:
+                value:
+                  name: Morning TV Bulletin
+                  platform: television
+                  slot: morning
+                  studio: Studio A
+                  slot_duration: 00:30:00
+                  is_active: true
+                summary: Morning TV
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BulletinConfigRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BulletinConfigRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulletinConfig'
+              examples:
+                MorningTV:
+                  value:
+                    id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                    name: Morning TV Bulletin
+                    platform: television
+                    slot: morning
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    is_active: true
+                  summary: Morning TV
+          description: ''
+    patch:
+      operationId: bulletin_configs_partial_update
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Patch bulletin config
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this bulletin config.
+        required: true
+      tags:
+      - Bulletin Configs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBulletinConfigRequest'
+            examples:
+              MorningTV:
+                value:
+                  name: Morning TV Bulletin
+                  platform: television
+                  slot: morning
+                  studio: Studio A
+                  slot_duration: 00:30:00
+                  is_active: true
+                summary: Morning TV
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBulletinConfigRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBulletinConfigRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulletinConfig'
+              examples:
+                MorningTV:
+                  value:
+                    id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                    name: Morning TV Bulletin
+                    platform: television
+                    slot: morning
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    is_active: true
+                  summary: Morning TV
+          description: ''
+    delete:
+      operationId: bulletin_configs_destroy
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Delete bulletin config
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this bulletin config.
+        required: true
+      tags:
+      - Bulletin Configs
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/bulletins:
     get:
       operationId: bulletins_list
@@ -926,7 +1197,6 @@ paths:
           airing_status   (str, required)  — "aired" | "not_aired"
           remarks         (str, optional)  — rundown note
           not_aired_reason (str, optional) — why the story didn't air
-          carried_to      (uuid, optional) — bulletin ID it was deferred to
       summary: Mark story air status
       parameters:
       - in: path
@@ -957,7 +1227,6 @@ paths:
                 value:
                   airing_status: not_aired
                   not_aired_reason: Time constraint
-                  carried_to: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 summary: Not aired
           application/x-www-form-urlencoded:
             schema:
@@ -3224,6 +3493,100 @@ components:
       - slot
       - slots
       - updated_at
+    BulletinConfig:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        platform:
+          enum:
+          - television
+          - radio
+          type: string
+          description: |-
+            * `television` - Television
+            * `radio` - Radio
+          x-spec-enum-id: 562fafbd4b066458
+        slot:
+          enum:
+          - morning
+          - midday
+          - afternoon
+          - evening
+          - late_night
+          - breaking
+          type: string
+          description: |-
+            * `morning` - Morning
+            * `midday` - Midday
+            * `afternoon` - Afternoon
+            * `evening` - Evening
+            * `late_night` - Late Night
+            * `breaking` - Breaking
+          x-spec-enum-id: c946736aa899c338
+        studio:
+          type: string
+          maxLength: 100
+        slot_duration:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+      required:
+      - id
+      - name
+      - platform
+      - slot
+    BulletinConfigRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        platform:
+          enum:
+          - television
+          - radio
+          type: string
+          description: |-
+            * `television` - Television
+            * `radio` - Radio
+          x-spec-enum-id: 562fafbd4b066458
+        slot:
+          enum:
+          - morning
+          - midday
+          - afternoon
+          - evening
+          - late_night
+          - breaking
+          type: string
+          description: |-
+            * `morning` - Morning
+            * `midday` - Midday
+            * `afternoon` - Afternoon
+            * `evening` - Evening
+            * `late_night` - Late Night
+            * `breaking` - Breaking
+          x-spec-enum-id: c946736aa899c338
+        studio:
+          type: string
+          maxLength: 100
+        slot_duration:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+      required:
+      - name
+      - platform
+      - slot
     BulletinRequest:
       type: object
       properties:
@@ -3549,6 +3912,25 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BroadcastScheduleList'
+    PaginatedBulletinConfigList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulletinConfig'
     PaginatedBulletinList:
       type: object
       required:
@@ -3663,9 +4045,6 @@ components:
         not_aired_reason:
           type: string
           default: ''
-        carried_to:
-          type: string
-          default: ''
     PatchedBroadcastScheduleListRequest:
       type: object
       properties:
@@ -3709,6 +4088,47 @@ components:
           format: date
           nullable: true
         metadata: {}
+    PatchedBulletinConfigRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        platform:
+          enum:
+          - television
+          - radio
+          type: string
+          description: |-
+            * `television` - Television
+            * `radio` - Radio
+          x-spec-enum-id: 562fafbd4b066458
+        slot:
+          enum:
+          - morning
+          - midday
+          - afternoon
+          - evening
+          - late_night
+          - breaking
+          type: string
+          description: |-
+            * `morning` - Morning
+            * `midday` - Midday
+            * `afternoon` - Afternoon
+            * `evening` - Evening
+            * `late_night` - Late Night
+            * `breaking` - Breaking
+          x-spec-enum-id: c946736aa899c338
+        studio:
+          type: string
+          maxLength: 100
+        slot_duration:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
     PatchedBulletinRequest:
       type: object
       properties:
