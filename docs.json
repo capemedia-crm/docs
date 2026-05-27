@@ -25,11 +25,11 @@
       },
       {
         "tab": "Commercial",
-        "openapi": "https://api.capedigital.co.ke/commercial/api/schema"
+        "openapi": "/openapi/commercial.yaml"
       },
       {
         "tab": "Content",
-        "openapi": "https://api.capedigital.co.ke/content/api/schema"
+        "openapi": "/openapi/content.yaml"
       }
     ],
     "global": {

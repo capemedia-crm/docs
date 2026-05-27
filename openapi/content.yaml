@@ -1,0 +1,4200 @@
+openapi: 3.0.3
+info:
+  title: Content Service API
+  version: 1.0.0 (v1)
+  description: "\n    **Content Service API** - Comprehensive content(story) and management
+    system.\n    "
+paths:
+  /api/v1/broadcast/graphics/lower-third/{story_id}/:
+    get:
+      operationId: broadcast_graphics_lower_third
+      description: |-
+        Newblue Captivate lower-third XML data feed.
+
+        Captivate polls this URL and maps the returned <field> values to template
+        variables (TITLE, REFERENCE, LOCATION, REPORTER, CATEGORY, SUMMARY).
+
+        Setup in Captivate:
+          Template → Properties → Data → Data Source: URL
+          URL: .../broadcast/graphics/lower-third/{story_id}/
+      summary: Captivate lower-third data feed
+      parameters:
+      - in: path
+        name: story_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - Broadcast
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/broadcast/graphics/ticker/:
+    get:
+      operationId: broadcast_graphics_ticker
+      description: |-
+        Captivate news ticker XML data feed — the rolling scroll at the bottom of screen.
+
+        Returns the 20 most recently updated published stories.
+        Captivate polls this and maps each <row> to one ticker item.
+
+        Setup in Captivate:
+          Ticker/Scroll template → Data Source: URL
+          URL: .../broadcast/graphics/ticker/
+          Refresh: 30 seconds
+      summary: Captivate news ticker feed
+      tags:
+      - Broadcast
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/broadcast/mos/{bulletin_id}/:
+    post:
+      operationId: broadcast_mos_send
+      description: |-
+        Push a bulletin's ordered story rundown to Synergy MCR via MOS roCreate.
+
+        Called by a producer in the CRM when the bulletin is locked and ready.
+        Synergy receives the full ordered list of stories and prepares them for playout.
+        Use PUT to update an already-sent rundown (sends roReplace instead).
+      summary: Send rundown to Synergy
+      parameters:
+      - in: path
+        name: bulletin_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - Broadcast
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/broadcast/mos/{bulletin_id}/delete/:
+    delete:
+      operationId: broadcast_mos_delete
+      description: Send MOS roDelete to clear the rundown from Synergy after the bulletin
+        airs.
+      summary: Delete rundown from Synergy
+      parameters:
+      - in: path
+        name: bulletin_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - Broadcast
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/broadcast/mos/status/:
+    post:
+      operationId: broadcast_mos_status
+      description: |-
+        Receive mosItemStatus callbacks from Synergy MCR.
+
+        Synergy POSTs MOS XML here each time a story slot changes state:
+          READY   → cued up, ready to play
+          PLAYING → on air
+          STOP    → taken off air
+          BUSY    → clip loading
+
+        Configure in Synergy: MOS → NCS Connections → Upper Port callback URL.
+        No JWT required — Synergy does not send auth tokens.
+      summary: Receive Synergy MOS status callback
+      tags:
+      - Broadcast
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/broadcast/tricaster/datalink/{bulletin_id}/:
+    get:
+      operationId: broadcast_tricaster_datalink
+      description: |-
+        Tricaster DataLink HTTP source — polled every 5 seconds.
+
+        Returns plain-text key=value pairs (one per line). Tricaster maps each key
+        to a DataLink variable used in the virtual set, DDR labels, and title overlays.
+
+        Setup in Tricaster:
+          DataLink → Add Source → HTTP
+          URL: .../broadcast/tricaster/datalink/{bulletin_id}/
+          Refresh: 5 seconds
+      summary: Tricaster DataLink feed
+      parameters:
+      - in: path
+        name: bulletin_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - Broadcast
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/broadcast/tricaster/events/:
+    post:
+      operationId: broadcast_tricaster_event
+      description: |-
+        Receive switcher/DDR events from Tricaster via Network Triggers.
+
+        Setup in Tricaster:
+          Automation → Network Triggers → Add
+          Event: On Take / DDR Record Start / DDR Record Stop
+          Action: HTTP POST → .../broadcast/tricaster/events/
+          Body: {"event": "TAKE", "source": "DDR1", "bulletin_id": "..."}
+
+        Currently logs the event. Extend to update on-air state, trigger
+        downstream workflows, or sync with the Synergy playout state.
+      summary: Receive Tricaster switcher event
+      tags:
+      - Broadcast
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/bulletins:
+    get:
+      operationId: bulletins_list
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: List bulletins
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBulletinList'
+              examples:
+                BulletinResponse:
+                  value:
+                    next: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+                    previous: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+                    results:
+                    - id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                      platform: television
+                      slot: evening
+                      scheduled_at: '2026-05-27T19:00:00Z'
+                      studio: Studio A
+                      slot_duration: 00:30:00
+                      editor_on_duty:
+                        id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                        name: John Doe
+                        employee_number: EMP-001
+                      editor_in_chief:
+                        id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                        name: Jane Smith
+                        employee_number: EMP-002
+                      presenters:
+                      - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                        name: Peter Kamau
+                        employee_number: EMP-003
+                      report_status: draft
+                      slots: []
+                      created_at: '2026-05-27T10:00:00Z'
+                      updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+    post:
+      operationId: bulletins_create
+      description: Create a new {self.verbose_name}
+      summary: Create bulletin
+      tags:
+      - Bulletins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulletinRequest'
+            examples:
+              CreateBulletin:
+                value:
+                  platform: television
+                  slot: evening
+                  scheduled_at: '2026-05-27T19:00:00Z'
+                  studio: Studio A
+                  slot_duration: 00:30:00
+                  editor_on_duty: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  presenters:
+                  - 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                summary: Create bulletin
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BulletinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BulletinRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}:
+    get:
+      operationId: bulletins_retrieve
+      description: Retrieve a {self.verbose_name}
+      summary: Get bulletin
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+    put:
+      operationId: bulletins_update
+      description: Update a {self.verbose_name}
+      summary: Update bulletin
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulletinRequest'
+            examples:
+              CreateBulletin:
+                value:
+                  platform: television
+                  slot: evening
+                  scheduled_at: '2026-05-27T19:00:00Z'
+                  studio: Studio A
+                  slot_duration: 00:30:00
+                  editor_on_duty: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  presenters:
+                  - 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                summary: Create bulletin
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BulletinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BulletinRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+    patch:
+      operationId: bulletins_partial_update
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Patch bulletin
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBulletinRequest'
+            examples:
+              CreateBulletin:
+                value:
+                  platform: television
+                  slot: evening
+                  scheduled_at: '2026-05-27T19:00:00Z'
+                  studio: Studio A
+                  slot_duration: 00:30:00
+                  editor_on_duty: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  presenters:
+                  - 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                summary: Create bulletin
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBulletinRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBulletinRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+    delete:
+      operationId: bulletins_destroy
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Delete bulletin
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/bulletins/{id}/reorder:
+    patch:
+      operationId: bulletins_reorder
+      description: PATCH /bulletins/{id}/reorder
+      summary: Reorder bulletin rundown
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedReorderRequest'
+            examples:
+              ReorderRundown:
+                value:
+                  slots:
+                  - story: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    order: 1
+                  - story: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                    order: 2
+                summary: Reorder rundown
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedReorderRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedReorderRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}/report:
+    get:
+      operationId: bulletins_report
+      description: GET /bulletins/{id}/report — full post-bulletin report snapshot.
+      summary: Get bulletin report
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}/scripts:
+    get:
+      operationId: bulletins_scripts
+      description: GET /bulletins/{id}/scripts
+      summary: Get bulletin scripts
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}/send-for-review:
+    post:
+      operationId: bulletins_send_for_review
+      description: |-
+        POST /bulletins/{id}/send-for-review
+
+        Submit the signed-off report to the editor in chief for review.
+        Report must be in signed_off state.
+      summary: Send bulletin report for review
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}/sign-off:
+    post:
+      operationId: bulletins_sign_off
+      description: |-
+        POST /bulletins/{id}/sign-off
+
+        Editor on duty closes out the report with remarks.
+        All stories must be marked before sign-off is allowed.
+
+        Body:
+          editor_remarks (str, optional)
+      summary: Sign off bulletin report
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulletinSignOffRequest'
+            examples:
+              SignOff:
+                value:
+                  editor_remarks: All stories verified. Bulletin closed.
+                summary: Sign off
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BulletinSignOffRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BulletinSignOffRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}/stories:
+    post:
+      operationId: bulletins_add_story
+      description: POST /bulletins/{id}/stories
+      summary: Add story to bulletin
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddStoryRequest'
+            examples:
+              AddStory:
+                value:
+                  story: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  order: 1
+                summary: Add story
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AddStoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddStoryRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}/stories/{story_id}:
+    delete:
+      operationId: bulletins_remove_story
+      description: DELETE /bulletins/{id}/stories/{story_id}
+      summary: Remove story from bulletin
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      - in: path
+        name: story_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/bulletins/{id}/stories/{story_id}/air:
+    patch:
+      operationId: bulletins_mark_air_status
+      description: |-
+        PATCH /bulletins/{id}/stories/{story_id}/air
+
+        Body:
+          airing_status   (str, required)  — "aired" | "not_aired"
+          remarks         (str, optional)  — rundown note
+          not_aired_reason (str, optional) — why the story didn't air
+          carried_to      (uuid, optional) — bulletin ID it was deferred to
+      summary: Mark story air status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      - in: path
+        name: story_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Bulletins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAirStoryRequest'
+            examples:
+              Aired:
+                value:
+                  airing_status: aired
+                  remarks: Ran as planned
+              NotAired:
+                value:
+                  airing_status: not_aired
+                  not_aired_reason: Time constraint
+                  carried_to: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                summary: Not aired
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAirStoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAirStoryRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}/tracker:
+    get:
+      operationId: bulletins_tracker
+      description: GET /bulletins/{id}/tracker — live airing tracker.
+      summary: Get bulletin tracker
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    editor_in_chief:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/digital/posts:
+    get:
+      operationId: digital_list
+      description: Read-only feed of external digital posts synced from WordPress.
+      summary: List digital posts
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Digital
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedExternalPostList'
+          description: ''
+  /api/v1/digital/posts/{id}:
+    get:
+      operationId: digital_retrieve
+      description: Read-only feed of external digital posts synced from WordPress.
+      summary: Get digital post
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this External Post.
+        required: true
+      tags:
+      - Digital
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalPostDetail'
+          description: ''
+  /api/v1/digital/posts/analytics/publishing-cadence:
+    get:
+      operationId: digital_publishing_cadence
+      description: Read-only feed of external digital posts synced from WordPress.
+      summary: Get publishing cadence
+      tags:
+      - Digital
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalPost'
+          description: ''
+  /api/v1/digital/posts/latest:
+    get:
+      operationId: digital_latest
+      description: Read-only feed of external digital posts synced from WordPress.
+      summary: Get latest digital post
+      tags:
+      - Digital
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalPost'
+          description: ''
+  /api/v1/lineup:
+    get:
+      operationId: lineup_list
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: List broadcast schedules
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Lineup
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBroadcastScheduleListList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    next: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+                    previous: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+                    results:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      medium: TV
+                      channel: TV47
+                      month: 5
+                      year: 2026
+                      title: TV47 MAY 2026
+                      version: 1
+                      effective_from: '2026-05-01'
+                      effective_to: '2026-05-31'
+                      uploaded_by:
+                        id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                        name: John Doe
+                        employee_number: EMP-001
+                      slot_count:
+                        '2026-05-01':
+                          day: THU
+                          count: 12
+                      metadata: {}
+                      created_at: '2026-05-01T08:00:00Z'
+                      updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+    post:
+      operationId: lineup_create
+      description: Create a new {self.verbose_name}
+      summary: Create broadcast schedule
+      tags:
+      - Lineup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BroadcastScheduleListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BroadcastScheduleListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BroadcastScheduleListRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+  /api/v1/lineup/{id}:
+    get:
+      operationId: lineup_retrieve
+      description: Retrieve a {self.verbose_name}
+      summary: Get broadcast schedule
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Broadcast Schedule.
+        required: true
+      tags:
+      - Lineup
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+    put:
+      operationId: lineup_update
+      description: Update a {self.verbose_name}
+      summary: Update broadcast schedule
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Broadcast Schedule.
+        required: true
+      tags:
+      - Lineup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BroadcastScheduleListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BroadcastScheduleListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BroadcastScheduleListRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+    patch:
+      operationId: lineup_partial_update
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Patch broadcast schedule
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Broadcast Schedule.
+        required: true
+      tags:
+      - Lineup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedBroadcastScheduleListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedBroadcastScheduleListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBroadcastScheduleListRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+    delete:
+      operationId: lineup_destroy
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Delete broadcast schedule
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Broadcast Schedule.
+        required: true
+      tags:
+      - Lineup
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/lineup/{id}/export:
+    post:
+      operationId: lineup_export
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Export schedule as Excel
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Broadcast Schedule.
+        required: true
+      tags:
+      - Lineup
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+  /api/v1/lineup/{id}/grid:
+    get:
+      operationId: lineup_grid
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Get schedule grid
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Broadcast Schedule.
+        required: true
+      tags:
+      - Lineup
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+  /api/v1/lineup/{id}/slots:
+    get:
+      operationId: lineup_slots
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: List schedule slots
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Broadcast Schedule.
+        required: true
+      tags:
+      - Lineup
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+  /api/v1/lineup/{id}/slots/{slot_id}/assets/{asset_id}:
+    delete:
+      operationId: lineup_remove_asset
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Remove slot asset
+      parameters:
+      - in: path
+        name: asset_id
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Broadcast Schedule.
+        required: true
+      - in: path
+        name: slot_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Lineup
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/lineup/slots/{slot_id}/assets:
+    get:
+      operationId: lineup_assets_list
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: List slot assets
+      parameters:
+      - in: path
+        name: slot_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Lineup
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+    post:
+      operationId: lineup_assets_create
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Attach asset to slot
+      parameters:
+      - in: path
+        name: slot_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Lineup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DigitalAssetCreateRequest'
+            examples:
+              AttachAsset:
+                value:
+                  document_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                summary: Attach asset
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DigitalAssetCreateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DigitalAssetCreateRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+  /api/v1/lineup/upload:
+    post:
+      operationId: lineup_upload
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Upload lineup from Excel
+      tags:
+      - Lineup
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LineupUploadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LineupUploadRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BroadcastScheduleList'
+              examples:
+                ScheduleResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    month: 5
+                    year: 2026
+                    title: TV47 MAY 2026
+                    version: 1
+                    effective_from: '2026-05-01'
+                    effective_to: '2026-05-31'
+                    uploaded_by:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    slot_count:
+                      '2026-05-01':
+                        day: THU
+                        count: 12
+                    metadata: {}
+                    created_at: '2026-05-01T08:00:00Z'
+                    updated_at: '2026-05-01T08:00:00Z'
+                  summary: Schedule response
+          description: ''
+  /api/v1/stories:
+    get:
+      operationId: stories_list
+      description: Story ViewSet
+      summary: List stories
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStoryList'
+              examples:
+                StoryResponse:
+                  value:
+                    next: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+                    previous: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+                    results:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      reference: CT-2026-001
+                      title: Government announces new economic policy
+                      location: Nairobi
+                      summary: The government has announced a sweeping new economic
+                        policy...
+                      category: Politics
+                      treatment: Package
+                      estimated_duration: 120
+                      urgency_level: high
+                      status: pending
+                      node: NODE_PITCH
+                      created_at: '2026-05-27T08:00:00Z'
+                      updated_at: '2026-05-27T08:00:00Z'
+                      reporter:
+                        id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                        name: James Wanjiru
+                        employee_number: EMP-004
+                  summary: Story response
+          description: ''
+    post:
+      operationId: stories_create
+      description: Create a new {self.verbose_name}
+      summary: Create story
+      tags:
+      - Stories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoryRequest'
+            examples:
+              CreateStory:
+                value:
+                  title: Government announces new economic policy
+                  location: Nairobi
+                  summary: The government has announced a sweeping new economic policy...
+                  category: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  treatment: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                  estimated_duration: 120
+                  urgency_level: high
+                  submit_for_approval: false
+                summary: Create story
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StoryRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/{id}:
+    get:
+      operationId: stories_retrieve
+      description: Retrieve a {self.verbose_name}
+      summary: Get story
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story.
+        required: true
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryDetail'
+          description: ''
+    put:
+      operationId: stories_update
+      description: Update a {self.verbose_name}
+      summary: Update story
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story.
+        required: true
+      tags:
+      - Stories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoryRequest'
+            examples:
+              CreateStory:
+                value:
+                  title: Government announces new economic policy
+                  location: Nairobi
+                  summary: The government has announced a sweeping new economic policy...
+                  category: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  treatment: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                  estimated_duration: 120
+                  urgency_level: high
+                  submit_for_approval: false
+                summary: Create story
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StoryRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+    patch:
+      operationId: stories_partial_update
+      description: Story ViewSet
+      summary: Patch story
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story.
+        required: true
+      tags:
+      - Stories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryRequest'
+            examples:
+              CreateStory:
+                value:
+                  title: Government announces new economic policy
+                  location: Nairobi
+                  summary: The government has announced a sweeping new economic policy...
+                  category: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  treatment: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                  estimated_duration: 120
+                  urgency_level: high
+                  submit_for_approval: false
+                summary: Create story
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+    delete:
+      operationId: stories_destroy
+      description: Story ViewSet
+      summary: Delete story
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story.
+        required: true
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/stories/{id}/events:
+    get:
+      operationId: stories_events
+      description: Story ViewSet
+      summary: List story events
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story.
+        required: true
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/{id}/scripts/{script_id}:
+    patch:
+      operationId: stories_update_script
+      description: Story ViewSet
+      summary: Update story script
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story.
+        required: true
+      - in: path
+        name: script_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Stories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryScriptUpdateRequest'
+            examples:
+              UpdateScript:
+                value:
+                  intro: Coming up next — a special report on the new economic policy...
+                  script: Good evening and welcome to the 7PM news. The government
+                    today announced...
+                  script_byte: 45
+                summary: Update script
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryScriptUpdateRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryScriptUpdateRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/{id}/transition:
+    post:
+      operationId: stories_transition
+      description: Story ViewSet
+      summary: Transition story workflow node
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story.
+        required: true
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/afternoon-outlook:
+    get:
+      operationId: stories_afternoon_outlook
+      description: |-
+        GET /api/v1/stories/afternoon-outlook
+
+        Returns script-approved stories confirmed for the afternoon lineup.
+
+        Query params (optional):
+          date=YYYY-MM-DD  — defaults to today
+      summary: List afternoon outlook stories
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/analytics/dashboard:
+    get:
+      operationId: stories_dashboard
+      description: |-
+        GET /api/v1/stories/analytics/dashboard
+
+        Query params (optional):
+          date=YYYY-MM-DD  — defaults to today; future dates are rejected
+      summary: Get analytics dashboard
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/analytics/pitches:
+    get:
+      operationId: stories_pitch_analytics
+      description: |-
+        GET /api/v1/stories/analytics/pitches
+
+        Query params (optional):
+          date=YYYY-MM-DD  — defaults to today; future dates are rejected
+      summary: Get pitch analytics
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/calendar:
+    get:
+      operationId: stories_calendar
+      description: |-
+        GET /api/v1/stories/calendar
+
+        Returns stories whose story deadline or production deadline falls within
+        the requested date range. Defaults to the current calendar month.
+
+        Query params (optional):
+          period=today|this_week|this_month|this_year
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      summary: Get content calendar
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/form-schema:
+    get:
+      operationId: stories_form_schema
+      description: |-
+        GET /api/v1/stories/form-schema
+
+        Returns the field definitions used to render the story creation form.
+      summary: Get story form schema
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/morning-outlook:
+    get:
+      operationId: stories_morning_outlook
+      description: |-
+        GET /api/v1/stories/morning-outlook
+
+        Returns pitch-approved stories confirmed for the morning lineup.
+
+        Query params (optional):
+          date=YYYY-MM-DD  — defaults to today
+      summary: List morning outlook stories
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/stories/today:
+    get:
+      operationId: stories_today
+      description: |-
+        GET /api/v1/stories/today
+
+        Returns all stories in the Today's Stories gallery for the current day,
+        with their scripts and production assets for download.
+
+        Query params (optional):
+          date=YYYY-MM-DD  — defaults to today
+      summary: List today's gallery stories
+      tags:
+      - Stories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Story'
+              examples:
+                StoryResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CT-2026-001
+                    title: Government announces new economic policy
+                    location: Nairobi
+                    summary: The government has announced a sweeping new economic
+                      policy...
+                    category: Politics
+                    treatment: Package
+                    estimated_duration: 120
+                    urgency_level: high
+                    status: pending
+                    node: NODE_PITCH
+                    created_at: '2026-05-27T08:00:00Z'
+                    updated_at: '2026-05-27T08:00:00Z'
+                    reporter:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: James Wanjiru
+                      employee_number: EMP-004
+                  summary: Story response
+          description: ''
+  /api/v1/story-categories:
+    get:
+      operationId: categories_list
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: List story categories
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Story Categories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStoryCategoryList'
+          description: ''
+    post:
+      operationId: categories_create
+      description: Create a new {self.verbose_name}
+      summary: Create story category
+      tags:
+      - Story Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoryCategoryRequest'
+            examples:
+              CreateCategory:
+                value:
+                  name: Politics
+                  description: Political news and affairs
+                summary: Create category
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StoryCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StoryCategoryRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryCategory'
+          description: ''
+  /api/v1/story-categories/{id}:
+    get:
+      operationId: categories_retrieve
+      description: Retrieve a {self.verbose_name}
+      summary: Get story category
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story Category.
+        required: true
+      tags:
+      - Story Categories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryCategory'
+          description: ''
+    put:
+      operationId: categories_update
+      description: Update a {self.verbose_name}
+      summary: Update story category
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story Category.
+        required: true
+      tags:
+      - Story Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoryCategoryRequest'
+            examples:
+              CreateCategory:
+                value:
+                  name: Politics
+                  description: Political news and affairs
+                summary: Create category
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StoryCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StoryCategoryRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryCategory'
+          description: ''
+    patch:
+      operationId: categories_partial_update
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Patch story category
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story Category.
+        required: true
+      tags:
+      - Story Categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryCategoryRequest'
+            examples:
+              CreateCategory:
+                value:
+                  name: Politics
+                  description: Political news and affairs
+                summary: Create category
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryCategoryRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryCategory'
+          description: ''
+    delete:
+      operationId: categories_destroy
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Delete story category
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story Category.
+        required: true
+      tags:
+      - Story Categories
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/story-treatments:
+    get:
+      operationId: treatments_list
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: List story treatments
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Story Treatments
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedStoryTreatmentList'
+          description: ''
+    post:
+      operationId: treatments_create
+      description: Create a new {self.verbose_name}
+      summary: Create story treatment
+      tags:
+      - Story Treatments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoryTreatmentRequest'
+            examples:
+              CreateTreatment:
+                value:
+                  name: Package
+                  description: Pre-recorded news package with voiceover
+                summary: Create treatment
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StoryTreatmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StoryTreatmentRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryTreatment'
+          description: ''
+  /api/v1/story-treatments/{id}:
+    get:
+      operationId: treatments_retrieve
+      description: Retrieve a {self.verbose_name}
+      summary: Get story treatment
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story Treatment.
+        required: true
+      tags:
+      - Story Treatments
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryTreatment'
+          description: ''
+    put:
+      operationId: treatments_update
+      description: Update a {self.verbose_name}
+      summary: Update story treatment
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story Treatment.
+        required: true
+      tags:
+      - Story Treatments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StoryTreatmentRequest'
+            examples:
+              CreateTreatment:
+                value:
+                  name: Package
+                  description: Pre-recorded news package with voiceover
+                summary: Create treatment
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StoryTreatmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StoryTreatmentRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryTreatment'
+          description: ''
+    patch:
+      operationId: treatments_partial_update
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Patch story treatment
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story Treatment.
+        required: true
+      tags:
+      - Story Treatments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryTreatmentRequest'
+            examples:
+              CreateTreatment:
+                value:
+                  name: Package
+                  description: Pre-recorded news package with voiceover
+                summary: Create treatment
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryTreatmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStoryTreatmentRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoryTreatment'
+          description: ''
+    delete:
+      operationId: treatments_destroy
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      summary: Delete story treatment
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Story Treatment.
+        required: true
+      tags:
+      - Story Treatments
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    AddStoryRequest:
+      type: object
+      properties:
+        story:
+          type: string
+          format: uuid
+        order:
+          type: integer
+          minimum: 1
+      required:
+      - order
+      - story
+    BroadcastScheduleList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        medium:
+          enum:
+          - TV
+          - RADIO
+          - DIGITAL
+          type: string
+          description: |-
+            * `TV` - TV
+            * `RADIO` - Radio
+            * `DIGITAL` - Digital
+          x-spec-enum-id: aa21c11e9618ab2e
+        channel:
+          type: string
+          maxLength: 100
+        month:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        title:
+          type: string
+          maxLength: 255
+        version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        effective_from:
+          type: string
+          format: date
+          nullable: true
+        effective_to:
+          type: string
+          format: date
+          nullable: true
+        uploaded_by:
+          type: string
+          readOnly: true
+        slot_count:
+          type: object
+          additionalProperties: {}
+          readOnly: true
+        metadata: {}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - channel
+      - created_at
+      - id
+      - medium
+      - month
+      - slot_count
+      - title
+      - updated_at
+      - uploaded_by
+      - year
+    BroadcastScheduleListRequest:
+      type: object
+      properties:
+        medium:
+          enum:
+          - TV
+          - RADIO
+          - DIGITAL
+          type: string
+          description: |-
+            * `TV` - TV
+            * `RADIO` - Radio
+            * `DIGITAL` - Digital
+          x-spec-enum-id: aa21c11e9618ab2e
+        channel:
+          type: string
+          minLength: 1
+          maxLength: 100
+        month:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        effective_from:
+          type: string
+          format: date
+          nullable: true
+        effective_to:
+          type: string
+          format: date
+          nullable: true
+        metadata: {}
+      required:
+      - channel
+      - medium
+      - month
+      - title
+      - year
+    Bulletin:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        platform:
+          enum:
+          - television
+          - radio
+          type: string
+          x-spec-enum-id: 562fafbd4b066458
+          description: |-
+            Broadcast platform
+
+            * `television` - Television
+            * `radio` - Radio
+        slot:
+          enum:
+          - morning
+          - midday
+          - afternoon
+          - evening
+          - late_night
+          - breaking
+          type: string
+          x-spec-enum-id: c946736aa899c338
+          description: |-
+            Scheduled broadcast window
+
+            * `morning` - Morning
+            * `midday` - Midday
+            * `afternoon` - Afternoon
+            * `evening` - Evening
+            * `late_night` - Late Night
+            * `breaking` - Breaking
+        scheduled_at:
+          type: string
+          format: date-time
+          description: Date and time the bulletin is scheduled to air
+        studio:
+          type: string
+          description: Studio or broadcast location
+          maxLength: 100
+        slot_duration:
+          type: string
+          nullable: true
+          description: Total editorial time allocated for this bulletin slot (e.g.
+            30 minutes)
+        editor_on_duty:
+          type: string
+          format: uuid
+          nullable: true
+          description: User ID of the editor managing this bulletin
+        editor_in_chief:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+          description: User ID of the editor in chief / head of news who reviews the
+            report
+        presenters:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: User IDs of the news presenters/anchors for this bulletin
+        report_status:
+          enum:
+          - draft
+          - signed_off
+          - awaiting_review
+          - reviewed
+          type: string
+          x-spec-enum-id: b4fb3143817d8e95
+          readOnly: true
+          description: |-
+            Current state of the post-bulletin report
+
+            * `draft` - Draft
+            * `signed_off` - Signed Off
+            * `awaiting_review` - Awaiting Review
+            * `reviewed` - Reviewed
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/BulletinSlot'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - editor_in_chief
+      - id
+      - platform
+      - report_status
+      - scheduled_at
+      - slot
+      - slots
+      - updated_at
+    BulletinRequest:
+      type: object
+      properties:
+        platform:
+          enum:
+          - television
+          - radio
+          type: string
+          x-spec-enum-id: 562fafbd4b066458
+          description: |-
+            Broadcast platform
+
+            * `television` - Television
+            * `radio` - Radio
+        slot:
+          enum:
+          - morning
+          - midday
+          - afternoon
+          - evening
+          - late_night
+          - breaking
+          type: string
+          x-spec-enum-id: c946736aa899c338
+          description: |-
+            Scheduled broadcast window
+
+            * `morning` - Morning
+            * `midday` - Midday
+            * `afternoon` - Afternoon
+            * `evening` - Evening
+            * `late_night` - Late Night
+            * `breaking` - Breaking
+        scheduled_at:
+          type: string
+          format: date-time
+          description: Date and time the bulletin is scheduled to air
+        studio:
+          type: string
+          description: Studio or broadcast location
+          maxLength: 100
+        slot_duration:
+          type: string
+          nullable: true
+          description: Total editorial time allocated for this bulletin slot (e.g.
+            30 minutes)
+        editor_on_duty:
+          type: string
+          format: uuid
+          nullable: true
+          description: User ID of the editor managing this bulletin
+        presenters:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: User IDs of the news presenters/anchors for this bulletin
+      required:
+      - platform
+      - scheduled_at
+      - slot
+    BulletinSignOffRequest:
+      type: object
+      description: Input for POST .../sign-off
+      properties:
+        editor_remarks:
+          type: string
+          default: ''
+    BulletinSlot:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        story_id:
+          type: string
+          format: uuid
+          readOnly: true
+        order:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          description: Position of this story within the bulletin rundown
+      required:
+      - id
+      - order
+      - story_id
+    BulletinSlotRequest:
+      type: object
+      properties:
+        order:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          description: Position of this story within the bulletin rundown
+      required:
+      - order
+    DigitalAssetCreateRequest:
+      type: object
+      properties:
+        document_id:
+          type: string
+          format: uuid
+      required:
+      - document_id
+    ExternalPost:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        source:
+          enum:
+          - wordpress
+          type: string
+          description: '* `wordpress` - WordPress'
+          x-spec-enum-id: 0e48d7039de88201
+          readOnly: true
+          default: wordpress
+        external_id:
+          type: integer
+          readOnly: true
+          description: Post ID on the source platform
+        title:
+          type: string
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        excerpt:
+          type: string
+          readOnly: true
+        author_name:
+          type: string
+          readOnly: true
+        featured_image_url:
+          type: string
+          format: uri
+          readOnly: true
+          nullable: true
+        source_url:
+          type: string
+          format: uri
+          readOnly: true
+          description: Canonical URL on the source platform
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+        wp_categories:
+          readOnly: true
+          description: '[{id, name, slug}, ...]'
+        wp_tags:
+          readOnly: true
+          description: '[{id, name, slug}, ...]'
+        synced_at:
+          type: string
+          format: date-time
+          readOnly: true
+        story:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+          description: Editorial story that covers this digital post
+      required:
+      - author_name
+      - excerpt
+      - external_id
+      - featured_image_url
+      - id
+      - published_at
+      - slug
+      - source
+      - source_url
+      - story
+      - synced_at
+      - title
+      - wp_categories
+      - wp_tags
+    ExternalPostDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        source:
+          enum:
+          - wordpress
+          type: string
+          description: '* `wordpress` - WordPress'
+          x-spec-enum-id: 0e48d7039de88201
+          readOnly: true
+          default: wordpress
+        external_id:
+          type: integer
+          readOnly: true
+          description: Post ID on the source platform
+        title:
+          type: string
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          pattern: ^[-a-zA-Z0-9_]+$
+        excerpt:
+          type: string
+          readOnly: true
+        author_name:
+          type: string
+          readOnly: true
+        featured_image_url:
+          type: string
+          format: uri
+          readOnly: true
+          nullable: true
+        source_url:
+          type: string
+          format: uri
+          readOnly: true
+          description: Canonical URL on the source platform
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+        wp_categories:
+          readOnly: true
+          description: '[{id, name, slug}, ...]'
+        wp_tags:
+          readOnly: true
+          description: '[{id, name, slug}, ...]'
+        synced_at:
+          type: string
+          format: date-time
+          readOnly: true
+        story:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+          description: Editorial story that covers this digital post
+        content:
+          type: string
+          readOnly: true
+        raw_data:
+          readOnly: true
+          description: Full source API payload
+      required:
+      - author_name
+      - content
+      - excerpt
+      - external_id
+      - featured_image_url
+      - id
+      - published_at
+      - raw_data
+      - slug
+      - source
+      - source_url
+      - story
+      - synced_at
+      - title
+      - wp_categories
+      - wp_tags
+    LineupUploadRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+          description: Excel file (.xlsx) containing the broadcast lineup.
+        medium:
+          enum:
+          - TV
+          - RADIO
+          - DIGITAL
+          type: string
+          x-spec-enum-id: aa21c11e9618ab2e
+          description: |-
+            Broadcast medium: TV, RADIO, or DIGITAL.
+
+            * `TV` - TV
+            * `RADIO` - Radio
+            * `DIGITAL` - Digital
+        channel:
+          type: string
+          minLength: 1
+          description: Specific channel name e.g. TV47, RADIO 47, TV47 DIGITAL.
+          maxLength: 100
+        effective_from:
+          type: string
+          format: date
+          description: Schedule start date (defaults to 1st of the parsed month/year).
+        effective_to:
+          type: string
+          format: date
+          description: Schedule end date (defaults to last day of the parsed month/year).
+      required:
+      - channel
+      - effective_from
+      - effective_to
+      - file
+      - medium
+    PaginatedBroadcastScheduleListList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BroadcastScheduleList'
+    PaginatedBulletinList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bulletin'
+    PaginatedExternalPostList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExternalPost'
+    PaginatedStoryCategoryList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StoryCategory'
+    PaginatedStoryList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Story'
+    PaginatedStoryTreatmentList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/StoryTreatment'
+    PatchedAirStoryRequest:
+      type: object
+      description: Input for PATCH .../stories/{story_id}/air
+      properties:
+        airing_status:
+          enum:
+          - aired
+          - not_aired
+          type: string
+          description: |-
+            * `aired` - aired
+            * `not_aired` - not_aired
+          x-spec-enum-id: 39e68983a52ab35d
+        remarks:
+          type: string
+          default: ''
+        not_aired_reason:
+          type: string
+          default: ''
+        carried_to:
+          type: string
+          default: ''
+    PatchedBroadcastScheduleListRequest:
+      type: object
+      properties:
+        medium:
+          enum:
+          - TV
+          - RADIO
+          - DIGITAL
+          type: string
+          description: |-
+            * `TV` - TV
+            * `RADIO` - Radio
+            * `DIGITAL` - Digital
+          x-spec-enum-id: aa21c11e9618ab2e
+        channel:
+          type: string
+          minLength: 1
+          maxLength: 100
+        month:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        version:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        effective_from:
+          type: string
+          format: date
+          nullable: true
+        effective_to:
+          type: string
+          format: date
+          nullable: true
+        metadata: {}
+    PatchedBulletinRequest:
+      type: object
+      properties:
+        platform:
+          enum:
+          - television
+          - radio
+          type: string
+          x-spec-enum-id: 562fafbd4b066458
+          description: |-
+            Broadcast platform
+
+            * `television` - Television
+            * `radio` - Radio
+        slot:
+          enum:
+          - morning
+          - midday
+          - afternoon
+          - evening
+          - late_night
+          - breaking
+          type: string
+          x-spec-enum-id: c946736aa899c338
+          description: |-
+            Scheduled broadcast window
+
+            * `morning` - Morning
+            * `midday` - Midday
+            * `afternoon` - Afternoon
+            * `evening` - Evening
+            * `late_night` - Late Night
+            * `breaking` - Breaking
+        scheduled_at:
+          type: string
+          format: date-time
+          description: Date and time the bulletin is scheduled to air
+        studio:
+          type: string
+          description: Studio or broadcast location
+          maxLength: 100
+        slot_duration:
+          type: string
+          nullable: true
+          description: Total editorial time allocated for this bulletin slot (e.g.
+            30 minutes)
+        editor_on_duty:
+          type: string
+          format: uuid
+          nullable: true
+          description: User ID of the editor managing this bulletin
+        presenters:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: User IDs of the news presenters/anchors for this bulletin
+    PatchedReorderRequest:
+      type: object
+      properties:
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddStoryRequest'
+    PatchedStoryCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: name of story category
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: description of the category
+    PatchedStoryRequest:
+      type: object
+      description: Basic story serializer for list views.
+      properties:
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        title:
+          type: string
+          minLength: 1
+          description: The title of the story
+          maxLength: 255
+        location:
+          type: string
+          nullable: true
+          description: The location of the story (city, region, etc)
+          maxLength: 255
+        summary:
+          type: string
+          minLength: 1
+          description: The summary of the story
+        category:
+          type: string
+          format: uuid
+        treatment:
+          type: string
+          format: uuid
+        estimated_duration:
+          type: string
+          nullable: true
+          description: Estimated duration for story completion
+        urgency_level:
+          enum:
+          - low
+          - medium
+          - high
+          - urgent
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d6798d30633d11a9
+          nullable: true
+          description: |-
+            Story priority level
+
+            * `low` - Low
+            * `medium` - Medium
+            * `high` - High
+            * `urgent` - Urgent
+        submit_for_approval:
+          type: boolean
+          writeOnly: true
+          default: false
+          description: True to submit directly for editorial approval; False (default)
+            to save as draft.
+    PatchedStoryScriptUpdateRequest:
+      type: object
+      description: Writable serializer for EIC script edits. Only content fields are
+        editable.
+      properties:
+        intro:
+          type: string
+          minLength: 1
+          description: Brief introduction written by the reporter
+        script:
+          type: string
+          minLength: 1
+          description: Full script text entered by the reporter
+        script_byte:
+          type: string
+          minLength: 1
+          description: Short broadcast-ready summary (max 500 chars)
+          maxLength: 500
+    PatchedStoryTreatmentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: name of treatment
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: description of the treatment
+    Story:
+      type: object
+      description: Basic story serializer for list views.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        title:
+          type: string
+          description: The title of the story
+          maxLength: 255
+        location:
+          type: string
+          nullable: true
+          description: The location of the story (city, region, etc)
+          maxLength: 255
+        summary:
+          type: string
+          description: The summary of the story
+        category:
+          type: string
+          format: uuid
+        treatment:
+          type: string
+          format: uuid
+        estimated_duration:
+          type: string
+          nullable: true
+          description: Estimated duration for story completion
+        urgency_level:
+          enum:
+          - low
+          - medium
+          - high
+          - urgent
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d6798d30633d11a9
+          nullable: true
+          description: |-
+            Story priority level
+
+            * `low` - Low
+            * `medium` - Medium
+            * `high` - High
+            * `urgent` - Urgent
+        status:
+          type: string
+          readOnly: true
+          description: Human-readable workflow status (cached from workflow engine)
+        node:
+          type: string
+          readOnly: true
+          nullable: true
+          description: Current workflow node reference number (cached for performance)
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        reporter:
+          type: string
+          readOnly: true
+      required:
+      - category
+      - created_at
+      - id
+      - node
+      - reporter
+      - status
+      - summary
+      - title
+      - treatment
+      - updated_at
+    StoryCategory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          description: name of story category
+          maxLength: 100
+        description:
+          type: string
+          description: description of the category
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - description
+      - id
+      - name
+      - updated_at
+    StoryCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: name of story category
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: description of the category
+      required:
+      - description
+      - name
+    StoryDetail:
+      type: object
+      description: Detailed story serializer with all relationships
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        title:
+          type: string
+          description: The title of the story
+          maxLength: 255
+        location:
+          type: string
+          nullable: true
+          description: The location of the story (city, region, etc)
+          maxLength: 255
+        summary:
+          type: string
+          description: The summary of the story
+        category:
+          type: string
+          format: uuid
+          nullable: true
+          description: The category of the story
+        treatment:
+          type: string
+          format: uuid
+          nullable: true
+          description: The treatment of the story
+        estimated_duration:
+          type: string
+          nullable: true
+          description: Estimated duration for story completion
+        urgency_level:
+          enum:
+          - low
+          - medium
+          - high
+          - urgent
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d6798d30633d11a9
+          nullable: true
+          description: |-
+            Story priority level
+
+            * `low` - Low
+            * `medium` - Medium
+            * `high` - High
+            * `urgent` - Urgent
+        metadata:
+          description: Additional flexible metadata for custom fields
+        status:
+          type: string
+          readOnly: true
+          description: Human-readable workflow status (cached from workflow engine)
+        node:
+          type: string
+          readOnly: true
+          nullable: true
+          description: Current workflow node reference number (cached for performance)
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        workflow:
+          type: string
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - node
+      - status
+      - summary
+      - title
+      - updated_at
+      - workflow
+    StoryRequest:
+      type: object
+      description: Basic story serializer for list views.
+      properties:
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        title:
+          type: string
+          minLength: 1
+          description: The title of the story
+          maxLength: 255
+        location:
+          type: string
+          nullable: true
+          description: The location of the story (city, region, etc)
+          maxLength: 255
+        summary:
+          type: string
+          minLength: 1
+          description: The summary of the story
+        category:
+          type: string
+          format: uuid
+        treatment:
+          type: string
+          format: uuid
+        estimated_duration:
+          type: string
+          nullable: true
+          description: Estimated duration for story completion
+        urgency_level:
+          enum:
+          - low
+          - medium
+          - high
+          - urgent
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d6798d30633d11a9
+          nullable: true
+          description: |-
+            Story priority level
+
+            * `low` - Low
+            * `medium` - Medium
+            * `high` - High
+            * `urgent` - Urgent
+        submit_for_approval:
+          type: boolean
+          writeOnly: true
+          default: false
+          description: True to submit directly for editorial approval; False (default)
+            to save as draft.
+      required:
+      - category
+      - summary
+      - title
+      - treatment
+    StoryTreatment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          description: name of treatment
+          maxLength: 100
+        description:
+          type: string
+          description: description of the treatment
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - description
+      - id
+      - name
+      - updated_at
+    StoryTreatmentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: name of treatment
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: description of the treatment
+      required:
+      - description
+      - name
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Enter your JWT token in the format: Bearer <token>'

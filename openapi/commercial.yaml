@@ -1,0 +1,3021 @@
+openapi: 3.0.3
+info:
+  title: Commercial Service API
+  version: 1.0.0 (v1)
+  description: "\n    **Commercial Service API** - Lead management and campaign workflow
+    system.\n\n    ## Versioning\n    The API uses URL path versioning (e.g., `/api/v1/`,
+    `/api/v2/`).\n    Current version: **v1**\n    "
+paths:
+  /api/v1/campaigns:
+    get:
+      operationId: campaigns_list
+      description: Campaign ViewSet
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - campaigns
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCampaignList'
+          description: ''
+    post:
+      operationId: campaigns_create
+      description: Create a new {self.verbose_name}
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/campaigns/{id}:
+    get:
+      operationId: campaigns_retrieve
+      description: Retrieve a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Campaign.
+        required: true
+      tags:
+      - campaigns
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignDetail'
+          description: ''
+    put:
+      operationId: campaigns_update
+      description: Update a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Campaign.
+        required: true
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+    patch:
+      operationId: campaigns_partial_update
+      description: Campaign ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Campaign.
+        required: true
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCampaignRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCampaignRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCampaignRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+    delete:
+      operationId: campaigns_destroy
+      description: Campaign ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Campaign.
+        required: true
+      tags:
+      - campaigns
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/campaigns/{id}/events:
+    get:
+      operationId: campaigns_events_retrieve
+      description: Campaign ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Campaign.
+        required: true
+      tags:
+      - campaigns
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/campaigns/{id}/manage:
+    post:
+      operationId: campaigns_manage_create
+      description: Campaign ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Campaign.
+        required: true
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/campaigns/{id}/transition:
+    post:
+      operationId: campaigns_transition_create
+      description: Campaign ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Campaign.
+        required: true
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/campaigns/analytics/delivery:
+    get:
+      operationId: campaigns_analytics_delivery_retrieve
+      description: |-
+        GET /api/v1/campaigns/analytics/delivery
+
+        Query params (optional):
+          start_date=YYYY-MM-DD  — filters on campaign start_date
+          end_date=YYYY-MM-DD
+      tags:
+      - campaigns
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/campaigns/analytics/snapshot:
+    get:
+      operationId: campaigns_analytics_snapshot_retrieve
+      description: |-
+        GET /api/v1/campaigns/analytics/snapshot
+
+        Status counts (on_air, scheduled, paused, terminated, completed, cancelled)
+        plus date_active (campaigns whose date window contains today).
+
+        Query params (optional):
+          period=today|this_week|this_month|this_year
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - campaigns
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/campaigns/by-status:
+    get:
+      operationId: campaigns_by_status_retrieve
+      description: |-
+        GET /api/v1/campaigns/by-status?status=live|paused|terminated
+
+        Required query param:
+          status=live|paused|terminated
+
+        Optional query params:
+          period=today|this_week|this_month|this_year
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - campaigns
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/campaigns/callback:
+    post:
+      operationId: campaigns_callback_create
+      description: |-
+        POST /api/v1/campaigns/callback
+
+        Callback from the inventory service.
+      tags:
+      - campaigns
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CampaignRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+          description: ''
+  /api/v1/cts:
+    get:
+      operationId: cts_list
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - cts
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCTSListList'
+          description: ''
+    post:
+      operationId: cts_create
+      description: Create a new {self.verbose_name}
+      tags:
+      - cts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+  /api/v1/cts/{id}:
+    get:
+      operationId: cts_retrieve
+      description: Retrieve a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Commercial Transmission Schedule.
+        required: true
+      tags:
+      - cts
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSDetail'
+          description: ''
+    put:
+      operationId: cts_update
+      description: Update a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Commercial Transmission Schedule.
+        required: true
+      tags:
+      - cts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+    patch:
+      operationId: cts_partial_update
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Commercial Transmission Schedule.
+        required: true
+      tags:
+      - cts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCTSListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCTSListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCTSListRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+    delete:
+      operationId: cts_destroy
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Commercial Transmission Schedule.
+        required: true
+      tags:
+      - cts
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/cts/{id}/export:
+    post:
+      operationId: cts_export_create
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Commercial Transmission Schedule.
+        required: true
+      tags:
+      - cts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+  /api/v1/cts/{id}/slots:
+    get:
+      operationId: cts_slots_retrieve
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Commercial Transmission Schedule.
+        required: true
+      tags:
+      - cts
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+  /api/v1/cts/{id}/slots/{slot_id}:
+    patch:
+      operationId: cts_slots_partial_update
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Commercial Transmission Schedule.
+        required: true
+      - in: path
+        name: slot_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - cts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCTSListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCTSListRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCTSListRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+  /api/v1/cts/{id}/timeline:
+    get:
+      operationId: cts_timeline_retrieve
+      description: Return slots grouped by time_slot for a visual timeline.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Commercial Transmission Schedule.
+        required: true
+      tags:
+      - cts
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+  /api/v1/cts/analytics:
+    get:
+      operationId: cts_analytics_retrieve
+      description: 'Aggregate stats: slots per company.'
+      tags:
+      - cts
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+  /api/v1/cts/upload:
+    post:
+      operationId: cts_upload_create
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
+      tags:
+      - cts
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CTSListRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CTSList'
+          description: ''
+  /api/v1/lead-categories:
+    get:
+      operationId: lead_categories_list
+      description: Lead Category ViewSet
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - lead-categories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLeadCategoryList'
+          description: ''
+    post:
+      operationId: lead_categories_create
+      description: Create a new {self.verbose_name}
+      tags:
+      - lead-categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeadCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeadCategoryRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadCategory'
+          description: ''
+  /api/v1/lead-categories/{id}:
+    get:
+      operationId: lead_categories_retrieve
+      description: Retrieve a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead Category.
+        required: true
+      tags:
+      - lead-categories
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadCategory'
+          description: ''
+    put:
+      operationId: lead_categories_update
+      description: Update a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead Category.
+        required: true
+      tags:
+      - lead-categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeadCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeadCategoryRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadCategory'
+          description: ''
+    patch:
+      operationId: lead_categories_partial_update
+      description: Lead Category ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead Category.
+        required: true
+      tags:
+      - lead-categories
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadCategoryRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadCategoryRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadCategoryRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadCategory'
+          description: ''
+    delete:
+      operationId: lead_categories_destroy
+      description: Lead Category ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead Category.
+        required: true
+      tags:
+      - lead-categories
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/lead-sources:
+    get:
+      operationId: lead_sources_list
+      description: Lead Source ViewSet
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - lead-sources
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLeadSourceList'
+          description: ''
+    post:
+      operationId: lead_sources_create
+      description: Create a new {self.verbose_name}
+      tags:
+      - lead-sources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadSourceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeadSourceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeadSourceRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadSource'
+          description: ''
+  /api/v1/lead-sources/{id}:
+    get:
+      operationId: lead_sources_retrieve
+      description: Retrieve a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead Source.
+        required: true
+      tags:
+      - lead-sources
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadSource'
+          description: ''
+    put:
+      operationId: lead_sources_update
+      description: Update a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead Source.
+        required: true
+      tags:
+      - lead-sources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadSourceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeadSourceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeadSourceRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadSource'
+          description: ''
+    patch:
+      operationId: lead_sources_partial_update
+      description: Lead Source ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead Source.
+        required: true
+      tags:
+      - lead-sources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadSourceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadSourceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadSourceRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadSource'
+          description: ''
+    delete:
+      operationId: lead_sources_destroy
+      description: Lead Source ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead Source.
+        required: true
+      tags:
+      - lead-sources
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/leads:
+    get:
+      operationId: leads_list
+      description: Lead ViewSet
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedLeadList'
+          description: ''
+    post:
+      operationId: leads_create
+      description: Create a new {self.verbose_name}
+      tags:
+      - leads
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/{id}:
+    get:
+      operationId: leads_retrieve
+      description: Retrieve a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead.
+        required: true
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadDetail'
+          description: ''
+    put:
+      operationId: leads_update
+      description: Update a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead.
+        required: true
+      tags:
+      - leads
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+    patch:
+      operationId: leads_partial_update
+      description: Lead ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead.
+        required: true
+      tags:
+      - leads
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedLeadRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+    delete:
+      operationId: leads_destroy
+      description: Lead ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead.
+        required: true
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/leads/{id}/events:
+    get:
+      operationId: leads_events_retrieve
+      description: Lead ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead.
+        required: true
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/{id}/stage-booking:
+    post:
+      operationId: leads_stage_booking_create
+      description: |-
+        Callback from inv-service after send-to-transit.
+
+        Resolves the campaign from the lead and fires the stage_booking
+        transition on the campaign so the event and node update land on
+        the correct entity.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead.
+        required: true
+      tags:
+      - leads
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/{id}/transition:
+    post:
+      operationId: leads_transition_create
+      description: Lead ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Lead.
+        required: true
+      tags:
+      - leads
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeadRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/analytics/assigned:
+    get:
+      operationId: leads_analytics_assigned_retrieve
+      description: |-
+        GET /api/v1/leads/analytics/assigned
+
+        Returns the requesting user's actively assigned leads plus overall
+        assigned/unassigned counts across all leads.
+
+        Query params (optional):
+          period=today|this_week|this_month|this_year
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/analytics/demographics:
+    get:
+      operationId: leads_analytics_demographics_retrieve
+      description: |-
+        GET /api/v1/leads/analytics/demographics
+
+        Query params (optional):
+          period=today|this_week|this_month|this_year
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/analytics/revenue-pipeline:
+    get:
+      operationId: leads_analytics_revenue_pipeline_retrieve
+      description: |-
+        GET /api/v1/leads/analytics/revenue-pipeline
+
+        Query params (optional):
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/analytics/revenue-summary:
+    get:
+      operationId: leads_analytics_revenue_summary_retrieve
+      description: |-
+        GET /api/v1/leads/analytics/revenue-summary
+
+        Query params (optional):
+          period=today|this_week|this_month|this_year
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/analytics/sales-funnel:
+    get:
+      operationId: leads_analytics_sales_funnel_retrieve
+      description: |-
+        GET /api/v1/leads/analytics/sales-funnel
+
+        Query params (optional):
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/analytics/sales-team:
+    get:
+      operationId: leads_analytics_sales_team_retrieve
+      description: |-
+        GET /api/v1/leads/analytics/sales-team
+
+        Query params (optional):
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/analytics/users-leads-kpi:
+    get:
+      operationId: leads_analytics_users_leads_kpi_retrieve
+      description: |-
+        GET /api/v1/leads/analytics/users-leads-kpi
+
+        Compares all users by leads brought in, ranked by total leads created.
+
+        Query params (optional):
+          period=today|this_week|this_month|this_year
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/leads/analytics/users-revenue-kpi:
+    get:
+      operationId: leads_analytics_users_revenue_kpi_retrieve
+      description: |-
+        GET /api/v1/leads/analytics/users-revenue-kpi
+
+        Revenue brought in per user, ranked by total contract value.
+
+        Query params (optional):
+          period=today|this_week|this_month|this_year
+          start_date=YYYY-MM-DD
+          end_date=YYYY-MM-DD
+      tags:
+      - leads
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Lead'
+          description: ''
+  /api/v1/partners:
+    get:
+      operationId: partners_list
+      description: |-
+        Partner ViewSet
+
+        This viewset provides CRUD operations for the Partner model.
+
+        Actions:
+        - list: List all partners
+        - retrieve: Retrieve a partner by ID
+        - create: Create a new partner
+        - update: Update a partner
+        - destroy: Delete a partner
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - partners
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPartnerList'
+          description: ''
+    post:
+      operationId: partners_create
+      description: Create a new partner
+      tags:
+      - partners
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartnerRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PartnerRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PartnerRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+          description: ''
+  /api/v1/partners/{id}:
+    get:
+      operationId: partners_retrieve
+      description: Retrieve a partner by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Partner.
+        required: true
+      tags:
+      - partners
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+          description: ''
+    put:
+      operationId: partners_update
+      description: Update a partner
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Partner.
+        required: true
+      tags:
+      - partners
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartnerRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PartnerRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PartnerRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+          description: ''
+    delete:
+      operationId: partners_destroy
+      description: Deactivate a partner
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Partner.
+        required: true
+      tags:
+      - partners
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/partners/{id}/campaigns:
+    get:
+      operationId: partners_campaigns_retrieve
+      description: List all campaigns for a partner
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Partner.
+        required: true
+      tags:
+      - partners
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+          description: ''
+  /api/v1/partners/{id}/leads:
+    get:
+      operationId: partners_leads_retrieve
+      description: List all leads for a partner
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Partner.
+        required: true
+      tags:
+      - partners
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Partner'
+          description: ''
+  /api/v1/products:
+    get:
+      operationId: products_list
+      description: Product ViewSet
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - products
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProductList'
+          description: ''
+    post:
+      operationId: products_create
+      description: Create a new {self.verbose_name}
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+  /api/v1/products/{id}:
+    get:
+      operationId: products_retrieve
+      description: Retrieve a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Product.
+        required: true
+      tags:
+      - products
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    put:
+      operationId: products_update
+      description: Update a {self.verbose_name}
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Product.
+        required: true
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    patch:
+      operationId: products_partial_update
+      description: Product ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Product.
+        required: true
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProductRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedProductRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedProductRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          description: ''
+    delete:
+      operationId: products_destroy
+      description: Product ViewSet
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Product.
+        required: true
+      tags:
+      - products
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    CTSDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        medium:
+          enum:
+          - TV
+          - RADIO
+          - DIGITAL
+          type: string
+          description: |-
+            * `TV` - TV
+            * `RADIO` - Radio
+            * `DIGITAL` - Digital
+          x-spec-enum-id: aa21c11e9618ab2e
+        channel:
+          type: string
+          maxLength: 100
+        date:
+          type: string
+          format: date
+        day_of_week:
+          type: string
+          maxLength: 20
+        title:
+          type: string
+          maxLength: 255
+        uploaded_by:
+          type: string
+          readOnly: true
+        slot_count:
+          type: integer
+          readOnly: true
+        metadata: {}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/CommercialSlot'
+          readOnly: true
+      required:
+      - channel
+      - created_at
+      - date
+      - day_of_week
+      - id
+      - medium
+      - slot_count
+      - slots
+      - title
+      - updated_at
+      - uploaded_by
+    CTSList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        medium:
+          enum:
+          - TV
+          - RADIO
+          - DIGITAL
+          type: string
+          description: |-
+            * `TV` - TV
+            * `RADIO` - Radio
+            * `DIGITAL` - Digital
+          x-spec-enum-id: aa21c11e9618ab2e
+        channel:
+          type: string
+          maxLength: 100
+        date:
+          type: string
+          format: date
+        day_of_week:
+          type: string
+          maxLength: 20
+        title:
+          type: string
+          maxLength: 255
+        uploaded_by:
+          type: string
+          readOnly: true
+        slot_count:
+          type: integer
+          readOnly: true
+        metadata: {}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - channel
+      - created_at
+      - date
+      - day_of_week
+      - id
+      - medium
+      - slot_count
+      - title
+      - updated_at
+      - uploaded_by
+    CTSListRequest:
+      type: object
+      properties:
+        medium:
+          enum:
+          - TV
+          - RADIO
+          - DIGITAL
+          type: string
+          description: |-
+            * `TV` - TV
+            * `RADIO` - Radio
+            * `DIGITAL` - Digital
+          x-spec-enum-id: aa21c11e9618ab2e
+        channel:
+          type: string
+          minLength: 1
+          maxLength: 100
+        date:
+          type: string
+          format: date
+        day_of_week:
+          type: string
+          minLength: 1
+          maxLength: 20
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        metadata: {}
+      required:
+      - channel
+      - date
+      - day_of_week
+      - medium
+      - title
+    Campaign:
+      type: object
+      description: Campaign Serializer
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        start_date:
+          type: string
+          format: date
+          description: Campaign start date
+        end_date:
+          type: string
+          format: date
+          description: Campaign end date
+        status:
+          type: string
+          description: Lead status
+          maxLength: 50
+        node:
+          type: string
+          description: Workflow Node
+          maxLength: 50
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - end_date
+      - id
+      - node
+      - start_date
+      - status
+      - updated_at
+    CampaignDetail:
+      type: object
+      description: Campaign Detail Serializer
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        start_date:
+          type: string
+          format: date
+          description: Campaign start date
+        end_date:
+          type: string
+          format: date
+          description: Campaign end date
+        status:
+          type: string
+          description: Lead status
+          maxLength: 50
+        node:
+          type: string
+          description: Workflow Node
+          maxLength: 50
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        engine_request:
+          type: string
+          description: Workflow Engine request
+          maxLength: 20
+        metadata:
+          description: Campaign metadata
+        workflow:
+          type: string
+          readOnly: true
+        events:
+          type: string
+          readOnly: true
+      required:
+      - created_at
+      - end_date
+      - engine_request
+      - events
+      - id
+      - node
+      - start_date
+      - status
+      - updated_at
+      - workflow
+    CampaignRequest:
+      type: object
+      description: Campaign Serializer
+      properties:
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        start_date:
+          type: string
+          format: date
+          description: Campaign start date
+        end_date:
+          type: string
+          format: date
+          description: Campaign end date
+        status:
+          type: string
+          minLength: 1
+          description: Lead status
+          maxLength: 50
+        node:
+          type: string
+          minLength: 1
+          description: Workflow Node
+          maxLength: 50
+      required:
+      - end_date
+      - node
+      - start_date
+      - status
+    CommercialSlot:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        time_slot:
+          type: string
+          format: time
+          nullable: true
+          description: Broadcast time for this slot.
+        order:
+          type: integer
+          readOnly: true
+          description: Absolute position of this slot in the schedule.
+        company:
+          type: string
+          maxLength: 255
+        advert_name:
+          type: string
+          maxLength: 255
+        campaign_end_date:
+          type: string
+          format: date
+          nullable: true
+        metadata: {}
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - advert_name
+      - company
+      - created_at
+      - id
+      - order
+      - updated_at
+    Lead:
+      type: object
+      description: Lead Serializer
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        name:
+          type: string
+          description: Lead company name
+          maxLength: 100
+        contact_person:
+          type: string
+          description: Contact person name
+          maxLength: 100
+        contact_phone:
+          type: string
+          description: Contact phone number
+          maxLength: 30
+        contact_email:
+          type: string
+          format: email
+          description: Contact email address
+          maxLength: 50
+        lead_type:
+          enum:
+          - individual
+          - company
+          type: string
+          x-spec-enum-id: e09fc541d8e40a52
+          description: |-
+            Lead classification: individual or company
+
+            * `individual` - Individual
+            * `company` - Company
+        gender:
+          enum:
+          - male
+          - female
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d6713b157e7b4bdf
+          nullable: true
+          description: |-
+            Gender of individual lead (only applicable when lead_type is individual)
+
+            * `male` - Male
+            * `female` - Female
+        lead_category:
+          type: string
+          format: uuid
+        source:
+          type: string
+          format: uuid
+        partner:
+          type: string
+          format: uuid
+        products:
+          type: array
+          items:
+            type: string
+            format: uuid
+        status:
+          type: string
+          readOnly: true
+          description: Lead status
+        node:
+          type: string
+          readOnly: true
+          description: Workflow Node
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - contact_email
+      - contact_person
+      - contact_phone
+      - created_at
+      - id
+      - lead_category
+      - name
+      - node
+      - products
+      - source
+      - status
+      - updated_at
+    LeadCategory:
+      type: object
+      description: Lead Category Serializer
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          description: Lead category name
+          maxLength: 100
+        description:
+          type: string
+          description: Lead category description
+      required:
+      - description
+      - id
+      - name
+    LeadCategoryRequest:
+      type: object
+      description: Lead Category Serializer
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Lead category name
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: Lead category description
+      required:
+      - description
+      - name
+    LeadDetail:
+      type: object
+      description: Lead Detail Serializer
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        name:
+          type: string
+          description: Lead company name
+          maxLength: 100
+        contact_person:
+          type: string
+          description: Contact person name
+          maxLength: 100
+        contact_phone:
+          type: string
+          description: Contact phone number
+          maxLength: 30
+        contact_email:
+          type: string
+          format: email
+          description: Contact email address
+          maxLength: 50
+        lead_type:
+          enum:
+          - individual
+          - company
+          type: string
+          x-spec-enum-id: e09fc541d8e40a52
+          description: |-
+            Lead classification: individual or company
+
+            * `individual` - Individual
+            * `company` - Company
+        gender:
+          enum:
+          - male
+          - female
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d6713b157e7b4bdf
+          nullable: true
+          description: |-
+            Gender of individual lead (only applicable when lead_type is individual)
+
+            * `male` - Male
+            * `female` - Female
+        lead_category:
+          type: string
+          format: uuid
+        source:
+          type: string
+          format: uuid
+        partner:
+          type: string
+          format: uuid
+        products:
+          type: array
+          items:
+            type: string
+            format: uuid
+        status:
+          type: string
+          readOnly: true
+          description: Lead status
+        node:
+          type: string
+          readOnly: true
+          description: Workflow Node
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        engine_request:
+          type: string
+          description: Workflow Engine request
+          maxLength: 20
+        metadata:
+          description: Lead metadata
+        workflow:
+          type: string
+          readOnly: true
+      required:
+      - contact_email
+      - contact_person
+      - contact_phone
+      - created_at
+      - engine_request
+      - id
+      - lead_category
+      - name
+      - node
+      - products
+      - source
+      - status
+      - updated_at
+      - workflow
+    LeadRequest:
+      type: object
+      description: Lead Serializer
+      properties:
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        name:
+          type: string
+          minLength: 1
+          description: Lead company name
+          maxLength: 100
+        contact_person:
+          type: string
+          minLength: 1
+          description: Contact person name
+          maxLength: 100
+        contact_phone:
+          type: string
+          minLength: 1
+          description: Contact phone number
+          maxLength: 30
+        contact_email:
+          type: string
+          format: email
+          minLength: 1
+          description: Contact email address
+          maxLength: 50
+        lead_type:
+          enum:
+          - individual
+          - company
+          type: string
+          x-spec-enum-id: e09fc541d8e40a52
+          description: |-
+            Lead classification: individual or company
+
+            * `individual` - Individual
+            * `company` - Company
+        gender:
+          enum:
+          - male
+          - female
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d6713b157e7b4bdf
+          nullable: true
+          description: |-
+            Gender of individual lead (only applicable when lead_type is individual)
+
+            * `male` - Male
+            * `female` - Female
+        lead_category:
+          type: string
+          format: uuid
+        source:
+          type: string
+          format: uuid
+        partner:
+          type: string
+          format: uuid
+        products:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - contact_email
+      - contact_person
+      - contact_phone
+      - lead_category
+      - name
+      - products
+      - source
+    LeadSource:
+      type: object
+      description: Lead Source Serializer
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          description: Lead source name
+          maxLength: 100
+        description:
+          type: string
+          description: Lead source description
+      required:
+      - description
+      - id
+      - name
+    LeadSourceRequest:
+      type: object
+      description: Lead Source Serializer
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Lead source name
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: Lead source description
+      required:
+      - description
+      - name
+    PaginatedCTSListList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CTSList'
+    PaginatedCampaignList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Campaign'
+    PaginatedLeadCategoryList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadCategory'
+    PaginatedLeadList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Lead'
+    PaginatedLeadSourceList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/LeadSource'
+    PaginatedPartnerList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Partner'
+    PaginatedProductList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+    Partner:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          description: Partner company name
+          maxLength: 200
+        partner_type:
+          type: string
+          readOnly: true
+        industry:
+          type: string
+          readOnly: true
+        status:
+          type: string
+          description: Current partner status
+          maxLength: 20
+        metadata:
+          description: Additional flexible metadata
+        services:
+          type: string
+          readOnly: true
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartnerContact'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - contacts
+      - created_at
+      - id
+      - industry
+      - name
+      - partner_type
+      - services
+      - updated_at
+    PartnerContact:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          description: Contact name
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          description: Contact email address
+          maxLength: 150
+        phone:
+          type: string
+          description: Primary phone number
+          maxLength: 30
+        preferred_contact_method:
+          enum:
+          - email
+          - phone
+          type: string
+          x-spec-enum-id: 17f11a3a6a4008ba
+          description: |-
+            Preferred method of contact
+
+            * `email` - Email
+            * `phone` - Phone
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - id
+      - name
+      - preferred_contact_method
+      - updated_at
+    PartnerContactRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Contact name
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          minLength: 1
+          description: Contact email address
+          maxLength: 150
+        phone:
+          type: string
+          description: Primary phone number
+          maxLength: 30
+        preferred_contact_method:
+          enum:
+          - email
+          - phone
+          type: string
+          x-spec-enum-id: 17f11a3a6a4008ba
+          description: |-
+            Preferred method of contact
+
+            * `email` - Email
+            * `phone` - Phone
+      required:
+      - email
+      - name
+      - preferred_contact_method
+    PartnerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Partner company name
+          maxLength: 200
+        partner_type_id:
+          type: string
+          format: uuid
+          writeOnly: true
+        industry_id:
+          type: string
+          format: uuid
+          writeOnly: true
+        status:
+          type: string
+          minLength: 1
+          description: Current partner status
+          maxLength: 20
+        metadata:
+          description: Additional flexible metadata
+        services_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          writeOnly: true
+          minItems: 1
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartnerContactRequest'
+      required:
+      - contacts
+      - industry_id
+      - name
+      - partner_type_id
+      - services_ids
+    PatchedCTSListRequest:
+      type: object
+      properties:
+        medium:
+          enum:
+          - TV
+          - RADIO
+          - DIGITAL
+          type: string
+          description: |-
+            * `TV` - TV
+            * `RADIO` - Radio
+            * `DIGITAL` - Digital
+          x-spec-enum-id: aa21c11e9618ab2e
+        channel:
+          type: string
+          minLength: 1
+          maxLength: 100
+        date:
+          type: string
+          format: date
+        day_of_week:
+          type: string
+          minLength: 1
+          maxLength: 20
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        metadata: {}
+    PatchedCampaignRequest:
+      type: object
+      description: Campaign Serializer
+      properties:
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        start_date:
+          type: string
+          format: date
+          description: Campaign start date
+        end_date:
+          type: string
+          format: date
+          description: Campaign end date
+        status:
+          type: string
+          minLength: 1
+          description: Lead status
+          maxLength: 50
+        node:
+          type: string
+          minLength: 1
+          description: Workflow Node
+          maxLength: 50
+    PatchedLeadCategoryRequest:
+      type: object
+      description: Lead Category Serializer
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Lead category name
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: Lead category description
+    PatchedLeadRequest:
+      type: object
+      description: Lead Serializer
+      properties:
+        reference:
+          type: string
+          nullable: true
+          description: Generated reference string
+          maxLength: 30
+        name:
+          type: string
+          minLength: 1
+          description: Lead company name
+          maxLength: 100
+        contact_person:
+          type: string
+          minLength: 1
+          description: Contact person name
+          maxLength: 100
+        contact_phone:
+          type: string
+          minLength: 1
+          description: Contact phone number
+          maxLength: 30
+        contact_email:
+          type: string
+          format: email
+          minLength: 1
+          description: Contact email address
+          maxLength: 50
+        lead_type:
+          enum:
+          - individual
+          - company
+          type: string
+          x-spec-enum-id: e09fc541d8e40a52
+          description: |-
+            Lead classification: individual or company
+
+            * `individual` - Individual
+            * `company` - Company
+        gender:
+          enum:
+          - male
+          - female
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d6713b157e7b4bdf
+          nullable: true
+          description: |-
+            Gender of individual lead (only applicable when lead_type is individual)
+
+            * `male` - Male
+            * `female` - Female
+        lead_category:
+          type: string
+          format: uuid
+        source:
+          type: string
+          format: uuid
+        partner:
+          type: string
+          format: uuid
+        products:
+          type: array
+          items:
+            type: string
+            format: uuid
+    PatchedLeadSourceRequest:
+      type: object
+      description: Lead Source Serializer
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Lead source name
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: Lead source description
+    PatchedProductRequest:
+      type: object
+      description: Product Serializer
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Product name
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: Product description
+    Product:
+      type: object
+      description: Product Serializer
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          description: Product name
+          maxLength: 100
+        description:
+          type: string
+          description: Product description
+      required:
+      - description
+      - id
+      - name
+    ProductRequest:
+      type: object
+      description: Product Serializer
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Product name
+          maxLength: 100
+        description:
+          type: string
+          minLength: 1
+          description: Product description
+      required:
+      - description
+      - name
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Enter your JWT token in the format: Bearer <token>'
+servers:
+- url: https://api.capedigital.co.ke/commercial
+  description: Production
