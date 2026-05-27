@@ -17,8 +17,22 @@ info:
 paths:
   /api/v1/auth/correspondents/invite:
     get:
-      operationId: auth_correspondents_invite_retrieve
+      operationId: correspondents_list
       description: List all correspondent users.
+      summary: List correspondents
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
       tags:
       - Correspondents
       security:
@@ -28,11 +42,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CorrespondentUser'
+                $ref: '#/components/schemas/PaginatedCorrespondentUserList'
           description: ''
     post:
-      operationId: auth_correspondents_invite_create
-      description: Create and email a correspondent invitation.
+      operationId: correspondents_invite
+      description: Send an invitation email to a new correspondent. Internal users
+        only.
+      summary: Send correspondent invitation
       tags:
       - Correspondents
       requestBody:
@@ -50,16 +66,14 @@ paths:
       security:
       - bearerAuth: []
       responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CorrespondentUser'
-          description: ''
+        '201':
+          description: No response body
   /api/v1/auth/correspondents/invite/{token}:
     get:
-      operationId: auth_correspondents_invite_retrieve_2
-      description: Validate an invitation token before showing the registration form.
+      operationId: correspondents_validate_token
+      description: Check whether an invitation token is valid before showing the registration
+        form.
+      summary: Validate invitation token
       parameters:
       - in: path
         name: token
@@ -73,15 +87,12 @@ paths:
       - bearerAuth: []
       - {}
       responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CorrespondentUser'
-          description: ''
+        '200':
+          description: No response body
     post:
-      operationId: auth_correspondents_invite_create_2
-      description: Complete self-registration using an invitation token.
+      operationId: correspondents_register
+      description: Self-register as a correspondent using a valid invitation token.
+      summary: Complete correspondent registration
       parameters:
       - in: path
         name: token
@@ -115,12 +126,28 @@ paths:
           description: ''
   /api/v1/auth/department:
     get:
-      operationId: auth_department_retrieve
-      description: |-
-        Retrieve a paginated list of resources.
-
-        Returns:
-            Paginated response with serialized resource data.
+      operationId: departments_list
+      description: Return a paginated list of all departments.
+      summary: List departments
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - Departments
       security:
@@ -130,20 +157,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Department'
+                $ref: '#/components/schemas/PaginatedDepartmentList'
           description: ''
     post:
-      operationId: auth_department_create
-      description: |-
-        Handle POST request to create new resource.
-
-        Args:
-            request: Incoming HTTP request with creation data
-            *args: Additional positional arguments
-            **kwargs: Additional keyword arguments
-
-        Returns:
-            Response with created resource or error details
+      operationId: departments_create
+      description: Create a new department.
+      summary: Create department
       tags:
       - Departments
       requestBody:
@@ -161,26 +180,16 @@ paths:
       security:
       - bearerAuth: []
       responses:
-        '200':
+        '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Department'
           description: ''
     put:
-      operationId: auth_department_update
-      description: |-
-        Handle PUT request to update existing resource.
-
-        Expects 'id' field in request data to identify the resource.
-
-        Args:
-            request: Incoming HTTP request with update data
-            *args: Additional positional arguments
-            **kwargs: Additional keyword arguments
-
-        Returns:
-            Response with updated resource or error details
+      operationId: departments_update
+      description: Update an existing department.
+      summary: Update department
       tags:
       - Departments
       requestBody:
@@ -737,12 +746,28 @@ paths:
           description: ''
   /api/v1/auth/section:
     get:
-      operationId: auth_section_retrieve
-      description: |-
-        Retrieve a paginated list of resources.
-
-        Returns:
-            Paginated response with serialized resource data.
+      operationId: sections_list
+      description: Return a paginated list of sections, optionally filtered by department.
+      summary: List sections
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
       tags:
       - Departments
       security:
@@ -752,20 +777,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Section'
+                $ref: '#/components/schemas/PaginatedSectionList'
           description: ''
     post:
-      operationId: auth_section_create
-      description: |-
-        Handle POST request to create new resource.
-
-        Args:
-            request: Incoming HTTP request with creation data
-            *args: Additional positional arguments
-            **kwargs: Additional keyword arguments
-
-        Returns:
-            Response with created resource or error details
+      operationId: sections_create
+      description: Create a new section under a department.
+      summary: Create section
       tags:
       - Departments
       requestBody:
@@ -783,26 +800,16 @@ paths:
       security:
       - bearerAuth: []
       responses:
-        '200':
+        '201':
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Section'
           description: ''
     put:
-      operationId: auth_section_update
-      description: |-
-        Handle PUT request to update existing resource.
-
-        Expects 'id' field in request data to identify the resource.
-
-        Args:
-            request: Incoming HTTP request with update data
-            *args: Additional positional arguments
-            **kwargs: Additional keyword arguments
-
-        Returns:
-            Response with updated resource or error details
+      operationId: sections_update
+      description: Update an existing section.
+      summary: Update section
       tags:
       - Departments
       requestBody:
@@ -1575,6 +1582,48 @@ components:
       required:
       - action_type
       - permissions
+    PaginatedCorrespondentUserList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CorrespondentUser'
+    PaginatedDepartmentList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Department'
     PaginatedListUsersList:
       type: object
       required:
@@ -1598,6 +1647,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ListUsers'
+    PaginatedSectionList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Section'
     PatchedListUsersRequest:
       type: object
       description: Serializer for listing users with department information.
