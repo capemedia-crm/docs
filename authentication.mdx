@@ -1,0 +1,64 @@
+---
+title: "Authentication"
+description: "The API uses Keycloak JWT tokens. All endpoints require a Bearer token."
+---
+
+## Overview
+
+All endpoints are protected by Keycloak. You must include a valid JWT access token in every request.
+
+```http
+Authorization: Bearer <access_token>
+```
+
+## Obtaining a token
+
+Request a token from Keycloak using the client credentials or password grant, depending on your context.
+
+### Client credentials (service-to-service)
+
+```bash
+curl -X POST https://auth.diginacape.co.ke/realms/capemedia/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials" \
+  -d "client_id=<your-client-id>" \
+  -d "client_secret=<your-client-secret>"
+```
+
+### Password grant (user context)
+
+```bash
+curl -X POST https://auth.diginacape.co.ke/realms/capemedia/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=password" \
+  -d "client_id=<your-client-id>" \
+  -d "username=<username>" \
+  -d "password=<password>"
+```
+
+Both return a JSON response containing `access_token`:
+
+```json
+{
+  "access_token": "eyJhbGci...",
+  "expires_in": 300,
+  "token_type": "Bearer"
+}
+```
+
+## Using the token
+
+Pass the token as a `Bearer` header on every API call:
+
+```bash
+curl https://api.capedigital.co.ke/commercial/api/v1/leads/ \
+  -H "Authorization: Bearer eyJhbGci..."
+```
+
+## Token expiry
+
+Tokens expire after 300 seconds (5 minutes) by default. Refresh before expiry using the `refresh_token` from the initial response, or re-authenticate.
+
+<Note>
+  Tokens are realm-scoped to `capemedia`. Ensure your client has the required roles for the endpoints you are calling — a `403` indicates missing role assignments, not an invalid token.
+</Note>
