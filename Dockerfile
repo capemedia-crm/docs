@@ -1,11 +1,9 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 RUN npm install -g mintlify@latest
 
 WORKDIR /app
 COPY . .
-
-RUN mintlify install
 
 EXPOSE 3000
 
