@@ -30,6 +30,10 @@
       {
         "tab": "Content",
         "openapi": "/openapi/content.yaml"
+      },
+      {
+        "tab": "User",
+        "openapi": "/openapi/user.yaml"
       }
     ],
     "global": {

@@ -1,0 +1,1303 @@
+openapi: 3.0.3
+info:
+  title: CapeMedia User Service API
+  version: 1.0.0 (v1)
+  description: "\n    **CapeMedia User Service API** - Comprehensive user service
+    and management system.\n\n    ## Authentication\n    This API uses **JWT Bearer
+    tokens** for authentication.\n\n    1. Login via `/api/v1/auth/login` to obtain
+    tokens\n    2. Include the access token in the `Authorization` header: `Bearer
+    <access_token>`\n    3. Refresh expired tokens via `/api/v1/auth/refresh-token`\n\n
+    \   ## Versioning\n    The API uses URL path versioning (e.g., `/api/v1/`, `/api/v2/`).\n
+    \   Current version: **v1**\n    "
+  contact:
+    name: API Support
+    email: thakacreations@gmail.com
+  license:
+    name: Cape Media
+paths:
+  /api/v1/auth/correspondents/invite:
+    get:
+      operationId: auth_correspondents_invite_retrieve
+      description: List all correspondent users.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: auth_correspondents_invite_create
+      description: Create and email a correspondent invitation.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/correspondents/invite/{token}:
+    get:
+      operationId: auth_correspondents_invite_retrieve_2
+      description: Validate an invitation token before showing the registration form.
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: auth_correspondents_invite_create_2
+      description: Complete self-registration using an invitation token.
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/department:
+    get:
+      operationId: auth_department_retrieve
+      description: |-
+        Retrieve a paginated list of resources.
+
+        Returns:
+            Paginated response with serialized resource data.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+    post:
+      operationId: auth_department_create
+      description: |-
+        Handle POST request to create new resource.
+
+        Args:
+            request: Incoming HTTP request with creation data
+            *args: Additional positional arguments
+            **kwargs: Additional keyword arguments
+
+        Returns:
+            Response with created resource or error details
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+    put:
+      operationId: auth_department_update
+      description: |-
+        Handle PUT request to update existing resource.
+
+        Expects 'id' field in request data to identify the resource.
+
+        Args:
+            request: Incoming HTTP request with update data
+            *args: Additional positional arguments
+            **kwargs: Additional keyword arguments
+
+        Returns:
+            Response with updated resource or error details
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DepartmentRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Department'
+          description: ''
+  /api/v1/auth/forgot-password:
+    post:
+      operationId: auth_forgot_password_create
+      description: |-
+        Initiate password reset process.
+
+        Request Body:
+        {
+            "email": "user@example.com"
+        }
+
+        Response:
+        - 200: Password reset email sent (or email not found - no distinction for security)
+        - 400: Invalid email format
+        - 500: Server error sending email
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/login:
+    post:
+      operationId: auth_login_create
+      description: |-
+        Authenticate user and obtain access tokens.
+
+        This endpoint authenticates a user with Keycloak and returns
+        JWT access and refresh tokens for API access.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/logout:
+    post:
+      operationId: auth_logout_create
+      description: |-
+        Logout user with immediate token invalidation.
+
+        This performs a complete logout:
+        1. Adds access token to blacklist (immediate invalidation)
+        2. Revokes the refresh token (prevents getting new access tokens)
+        3. Terminates all Keycloak sessions for the user
+
+        After logout, the access token is immediately invalid on all subsequent requests.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/me/modules:
+    get:
+      operationId: auth_me_modules_retrieve
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/permissions:
+    get:
+      operationId: auth_permissions_retrieve
+      description: List all client roles.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/permissions/manage-permissions:
+    post:
+      operationId: auth_permissions_manage_permissions_create
+      description: List all client roles.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/permissions/manage-user-permissions:
+    post:
+      operationId: auth_permissions_manage_user_permissions_create
+      description: List all client roles.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/refresh-token:
+    post:
+      operationId: auth_refresh_token_create
+      description: |-
+        Refresh access token using refresh token.
+
+        This endpoint refreshes an access token using a refresh token.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/register:
+    post:
+      operationId: auth_register_create
+      description: Register a new user.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+          description: ''
+    put:
+      operationId: auth_register_update
+      description: |-
+        Update a user.
+
+        URL: PUT /api/v1/auth/users/<user_id>
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+          description: ''
+    delete:
+      operationId: auth_register_destroy
+      description: Deactivate a user.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/register-consumer:
+    post:
+      operationId: auth_register_consumer_create
+      description: Register a new Cape Digi consumer account.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerRegistrationRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ConsumerRegistrationRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ConsumerRegistrationRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerRegistration'
+          description: ''
+  /api/v1/auth/roles:
+    get:
+      operationId: auth_roles_retrieve
+      description: |-
+        List realm roles (all realm roles or department-specific realm roles).
+
+        Query Parameters:
+        - type: 'realm' or 'department' (default: realm)
+        - department_id: Department UUID (required if type=department)
+
+        Returns list of realm roles.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+    post:
+      operationId: auth_roles_create
+      description: Create a new realm role.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '201':
+          description: No response body
+  /api/v1/auth/roles/{id}:
+    get:
+      operationId: auth_roles_retrieve_2
+      description: Retrieve a specific realm role by ID with members.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+    put:
+      operationId: auth_roles_update
+      description: Update a realm role.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/roles/add-roles-to-department:
+    post:
+      operationId: auth_roles_add_roles_to_department_create
+      description: |-
+        Add existing realm roles to a department.
+
+        Request Body:
+        {
+            "department_id": "uuid",
+            "roles": [
+                {
+                    "keycloak_role_id": "uuid1",
+                    "name": "Role 1",
+                    "description": "Description for Role 1"
+                },
+                {
+                    "keycloak_role_id": "uuid2",
+                    "name": "Role 2",
+                    "description": "Description for Role 2"
+                }
+            ]
+        }
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/roles/manage-user-roles:
+    post:
+      operationId: auth_roles_manage_user_roles_create
+      description: Assign or unassign a role to/from a user.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/v1/auth/section:
+    get:
+      operationId: auth_section_retrieve
+      description: |-
+        Retrieve a paginated list of resources.
+
+        Returns:
+            Paginated response with serialized resource data.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+          description: ''
+    post:
+      operationId: auth_section_create
+      description: |-
+        Handle POST request to create new resource.
+
+        Args:
+            request: Incoming HTTP request with creation data
+            *args: Additional positional arguments
+            **kwargs: Additional keyword arguments
+
+        Returns:
+            Response with created resource or error details
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SectionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SectionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SectionRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+          description: ''
+    put:
+      operationId: auth_section_update
+      description: |-
+        Handle PUT request to update existing resource.
+
+        Expects 'id' field in request data to identify the resource.
+
+        Args:
+            request: Incoming HTTP request with update data
+            *args: Additional positional arguments
+            **kwargs: Additional keyword arguments
+
+        Returns:
+            Response with updated resource or error details
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SectionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SectionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SectionRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+          description: ''
+  /api/v1/auth/users:
+    get:
+      operationId: auth_users_list
+      description: List all users with pagination and filtering.
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListUsersList'
+          description: ''
+  /api/v1/auth/users/{id}:
+    get:
+      operationId: auth_users_retrieve
+      description: Retrieve a single user by ID.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this User.
+        required: true
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/{id}/events:
+    get:
+      operationId: auth_users_events_retrieve
+      description: Get Keycloak events for a specific user (cursor-paginated).
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this User.
+        required: true
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/{id}/permissions:
+    get:
+      operationId: auth_users_permissions_retrieve
+      description: Get all client-role permissions for a user, grouped by client.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this User.
+        required: true
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/by-permission:
+    post:
+      operationId: auth_users_by_permission_create
+      description: |-
+        Fetch users by permissions.
+        - Default: returns list[user_id]
+        - ?expand=true: returns list[{user_id, username, name}]
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/by-role:
+    get:
+      operationId: auth_users_by_role_retrieve
+      description: |-
+        ViewSet for user operations.
+
+        Provides:
+        - List users with pagination, search, and filtering
+        - Retrieve individual user details
+        - Get current user info from Keycloak token
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/department-members:
+    get:
+      operationId: auth_users_department_members_retrieve
+      description: list department members
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/fetch-users:
+    post:
+      operationId: auth_users_fetch_users_create
+      description: Fetch users by IDs.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/manage-users:
+    put:
+      operationId: auth_users_manage_users_update
+      description: Manage users.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ListUsersRequest'
+        required: true
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/section-members:
+    get:
+      operationId: auth_users_section_members_retrieve
+      description: list section members
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/stats:
+    get:
+      operationId: auth_users_stats_retrieve
+      description: |-
+        Get users statistics.
+
+        Returns counts of total, active, and inactive users.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/update-profile:
+    patch:
+      operationId: auth_users_update_profile_partial_update
+      description: Update the authenticated user's own profile.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedListUsersRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedListUsersRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedListUsersRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/users/user-info:
+    get:
+      operationId: auth_users_user_info_retrieve
+      description: |-
+        Get current authenticated user information.
+
+        Returns enriched user data combining:
+        - Keycloak token claims (roles, groups, etc.)
+        - Django profile data (department, employee number, etc.)
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUsers'
+          description: ''
+  /api/v1/auth/verify-otp:
+    post:
+      operationId: auth_verify_otp_create
+      description: Verify OTP for user.
+      tags:
+      - auth
+      security:
+      - bearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+components:
+  schemas:
+    ConsumerRegistration:
+      type: object
+      description: |-
+        Serializer for public Cape Digi user self-registration.
+
+        No employee number, department, or phone — consumers only need
+        email, name, and a password.  Realm is always capedigi.
+      properties:
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - first_name
+      - last_name
+    ConsumerRegistrationRequest:
+      type: object
+      description: |-
+        Serializer for public Cape Digi user self-registration.
+
+        No employee number, department, or phone — consumers only need
+        email, name, and a password.  Realm is always capedigi.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        confirm_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - confirm_password
+      - email
+      - first_name
+      - last_name
+      - password
+    Department:
+      type: object
+      description: Efficient serializer for Department.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - updated_at
+    DepartmentRequest:
+      type: object
+      description: Efficient serializer for Department.
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          minLength: 1
+      required:
+      - name
+    ListUsers:
+      type: object
+      description: Serializer for listing users with department information.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        name:
+          type: string
+          readOnly: true
+        phone_number:
+          type: string
+          maxLength: 50
+        status:
+          type: string
+          maxLength: 20
+        date_joined:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        inactive_alert:
+          type: boolean
+          description: |-
+            True if the user has not logged in for 2 or more business days (Mon–Fri).
+
+            None last_login (never logged in) is also treated as inactive.
+          readOnly: true
+      required:
+      - id
+      - inactive_alert
+      - name
+      - username
+    ListUsersRequest:
+      type: object
+      description: Serializer for listing users with department information.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone_number:
+          type: string
+          maxLength: 50
+        status:
+          type: string
+          minLength: 1
+          maxLength: 20
+        date_joined:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - username
+    PaginatedListUsersList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListUsers'
+    PatchedListUsersRequest:
+      type: object
+      description: Serializer for listing users with department information.
+      properties:
+        username:
+          type: string
+          minLength: 1
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        phone_number:
+          type: string
+          maxLength: 50
+        status:
+          type: string
+          minLength: 1
+          maxLength: 20
+        date_joined:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+    Registration:
+      type: object
+      description: |-
+        Serializer for user registration.
+
+        Creates User + UserProfile in Django, then syncs to Keycloak.
+      properties:
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        country_code:
+          type: string
+          maxLength: 3
+        phone_number:
+          type: string
+          maxLength: 50
+        employee_number:
+          type: string
+          maxLength: 100
+        department:
+          type: string
+          format: uuid
+          nullable: true
+        section:
+          type: string
+          format: uuid
+          nullable: true
+        roles:
+          type: array
+          items:
+            type: string
+        gender:
+          enum:
+          - MALE
+          - FEMALE
+          type: string
+          description: |-
+            * `MALE` - Male
+            * `FEMALE` - Female
+          x-spec-enum-id: 5ebfc1ecb69afaf0
+        realm:
+          type: string
+          default: capemedia
+      required:
+      - country_code
+      - email
+      - employee_number
+      - first_name
+      - gender
+      - last_name
+      - phone_number
+    RegistrationRequest:
+      type: object
+      description: |-
+        Serializer for user registration.
+
+        Creates User + UserProfile in Django, then syncs to Keycloak.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        country_code:
+          type: string
+          minLength: 1
+          maxLength: 3
+        phone_number:
+          type: string
+          minLength: 1
+          maxLength: 50
+        employee_number:
+          type: string
+          minLength: 1
+          maxLength: 100
+        department:
+          type: string
+          format: uuid
+          nullable: true
+        section:
+          type: string
+          format: uuid
+          nullable: true
+        roles:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        gender:
+          enum:
+          - MALE
+          - FEMALE
+          type: string
+          description: |-
+            * `MALE` - Male
+            * `FEMALE` - Female
+          x-spec-enum-id: 5ebfc1ecb69afaf0
+        realm:
+          type: string
+          minLength: 1
+          default: capemedia
+      required:
+      - country_code
+      - email
+      - employee_number
+      - first_name
+      - gender
+      - last_name
+      - phone_number
+    Section:
+      type: object
+      description: Serializer for Section (belongs to a Department).
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        description:
+          type: string
+        department:
+          allOf:
+          - $ref: '#/components/schemas/Department'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - department
+      - id
+      - name
+      - updated_at
+    SectionRequest:
+      type: object
+      description: Serializer for Section (belongs to a Department).
+      properties:
+        name:
+          type: string
+          minLength: 1
+        description:
+          type: string
+        department_id:
+          type: string
+          format: uuid
+          writeOnly: true
+      required:
+      - department_id
+      - name
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'Enter your JWT token in the format: Bearer <token>'
