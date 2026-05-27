@@ -57,8 +57,9 @@ paths:
     post:
       operationId: campaigns_create
       description: Create a new {self.verbose_name}
+      summary: Create campaign
       tags:
-      - campaigns
+      - Campaigns
       requestBody:
         content:
           application/json:
@@ -139,6 +140,7 @@ paths:
     put:
       operationId: campaigns_update
       description: Update a {self.verbose_name}
+      summary: Update campaign
       parameters:
       - in: path
         name: id
@@ -148,7 +150,7 @@ paths:
         description: A UUID string identifying this Campaign.
         required: true
       tags:
-      - campaigns
+      - Campaigns
       requestBody:
         content:
           application/json:
@@ -189,6 +191,7 @@ paths:
     patch:
       operationId: campaigns_partial_update
       description: Campaign ViewSet
+      summary: Partial update campaign
       parameters:
       - in: path
         name: id
@@ -198,7 +201,7 @@ paths:
         description: A UUID string identifying this Campaign.
         required: true
       tags:
-      - campaigns
+      - Campaigns
       requestBody:
         content:
           application/json:
@@ -238,6 +241,7 @@ paths:
     delete:
       operationId: campaigns_destroy
       description: Campaign ViewSet
+      summary: Delete campaign
       parameters:
       - in: path
         name: id
@@ -247,7 +251,7 @@ paths:
         description: A UUID string identifying this Campaign.
         required: true
       tags:
-      - campaigns
+      - Campaigns
       security:
       - bearerAuth: []
       responses:
@@ -1201,6 +1205,7 @@ paths:
     put:
       operationId: lead_categories_update
       description: Update a {self.verbose_name}
+      summary: Update lead category
       parameters:
       - in: path
         name: id
@@ -1210,7 +1215,7 @@ paths:
         description: A UUID string identifying this Lead Category.
         required: true
       tags:
-      - lead-categories
+      - Lead Categories
       requestBody:
         content:
           application/json:
@@ -1235,6 +1240,7 @@ paths:
     patch:
       operationId: lead_categories_partial_update
       description: Lead Category ViewSet
+      summary: Partial update lead category
       parameters:
       - in: path
         name: id
@@ -1244,7 +1250,7 @@ paths:
         description: A UUID string identifying this Lead Category.
         required: true
       tags:
-      - lead-categories
+      - Lead Categories
       requestBody:
         content:
           application/json:
@@ -1268,6 +1274,7 @@ paths:
     delete:
       operationId: lead_categories_destroy
       description: Lead Category ViewSet
+      summary: Delete lead category
       parameters:
       - in: path
         name: id
@@ -1277,7 +1284,7 @@ paths:
         description: A UUID string identifying this Lead Category.
         required: true
       tags:
-      - lead-categories
+      - Lead Categories
       security:
       - bearerAuth: []
       responses:
@@ -1366,6 +1373,7 @@ paths:
     put:
       operationId: lead_sources_update
       description: Update a {self.verbose_name}
+      summary: Update lead source
       parameters:
       - in: path
         name: id
@@ -1375,7 +1383,7 @@ paths:
         description: A UUID string identifying this Lead Source.
         required: true
       tags:
-      - lead-sources
+      - Lead Sources
       requestBody:
         content:
           application/json:
@@ -1400,6 +1408,7 @@ paths:
     patch:
       operationId: lead_sources_partial_update
       description: Lead Source ViewSet
+      summary: Partial update lead source
       parameters:
       - in: path
         name: id
@@ -1409,7 +1418,7 @@ paths:
         description: A UUID string identifying this Lead Source.
         required: true
       tags:
-      - lead-sources
+      - Lead Sources
       requestBody:
         content:
           application/json:
@@ -1433,6 +1442,7 @@ paths:
     delete:
       operationId: lead_sources_destroy
       description: Lead Source ViewSet
+      summary: Delete lead source
       parameters:
       - in: path
         name: id
@@ -1442,7 +1452,7 @@ paths:
         description: A UUID string identifying this Lead Source.
         required: true
       tags:
-      - lead-sources
+      - Lead Sources
       security:
       - bearerAuth: []
       responses:
@@ -1627,6 +1637,7 @@ paths:
     put:
       operationId: leads_update
       description: Update a {self.verbose_name}
+      summary: Update lead
       parameters:
       - in: path
         name: id
@@ -1636,7 +1647,7 @@ paths:
         description: A UUID string identifying this Lead.
         required: true
       tags:
-      - leads
+      - Leads
       requestBody:
         content:
           application/json:
@@ -1702,6 +1713,7 @@ paths:
     patch:
       operationId: leads_partial_update
       description: Lead ViewSet
+      summary: Partial update lead
       parameters:
       - in: path
         name: id
@@ -1711,7 +1723,7 @@ paths:
         description: A UUID string identifying this Lead.
         required: true
       tags:
-      - leads
+      - Leads
       requestBody:
         content:
           application/json:
@@ -1776,6 +1788,7 @@ paths:
     delete:
       operationId: leads_destroy
       description: Lead ViewSet
+      summary: Delete lead
       parameters:
       - in: path
         name: id
@@ -1785,7 +1798,7 @@ paths:
         description: A UUID string identifying this Lead.
         required: true
       tags:
-      - leads
+      - Leads
       security:
       - bearerAuth: []
       responses:
@@ -2839,6 +2852,7 @@ paths:
     put:
       operationId: products_update
       description: Update a {self.verbose_name}
+      summary: Update product
       parameters:
       - in: path
         name: id
@@ -2848,7 +2862,7 @@ paths:
         description: A UUID string identifying this Product.
         required: true
       tags:
-      - products
+      - Products
       requestBody:
         content:
           application/json:
@@ -2873,6 +2887,7 @@ paths:
     patch:
       operationId: products_partial_update
       description: Product ViewSet
+      summary: Partial update product
       parameters:
       - in: path
         name: id
@@ -2882,7 +2897,7 @@ paths:
         description: A UUID string identifying this Product.
         required: true
       tags:
-      - products
+      - Products
       requestBody:
         content:
           application/json:
@@ -2906,6 +2921,7 @@ paths:
     delete:
       operationId: products_destroy
       description: Product ViewSet
+      summary: Delete product
       parameters:
       - in: path
         name: id
@@ -2915,7 +2931,7 @@ paths:
         description: A UUID string identifying this Product.
         required: true
       tags:
-      - products
+      - Products
       security:
       - bearerAuth: []
       responses:
