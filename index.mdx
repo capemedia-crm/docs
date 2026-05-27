@@ -1,30 +1,27 @@
 ---
 title: "Introduction"
-description: "Cape Digital Commercial Service API — lead management, campaigns, and partner workflows."
+description: "Cape Digital API — microservices for CRM, content, and broadcast workflows."
 ---
 
 ## Overview
 
-The Commercial Service API provides endpoints for managing leads, campaigns, partners, and CTS (client tracking) workflows across the Cape Digital platform.
+Cape Digital exposes its platform through a set of versioned REST APIs. All services share the same authentication model and base domain.
 
-**Base URL**
-```
-https://api.capedigital.co.ke/commercial
-```
-
-**Current version:** `v1`  
-All endpoints are prefixed with `/api/v1/`.
+**Base domain:** `https://api.capedigital.co.ke`  
+**API version:** `v1` — all endpoints are prefixed with `/api/v1/`
 
 ## Authentication
 
-All API requests require a valid JWT token issued by Keycloak. See the [Authentication](/authentication) guide to obtain and use tokens.
+All endpoints require a Keycloak JWT Bearer token. See the [Authentication](/authentication) guide.
 
-## Explore the API
+## Services
 
-<Card
-  title="API Reference"
-  icon="terminal"
-  href="/api-reference"
->
-  Browse all endpoints, request/response schemas, and try requests live.
-</Card>
+<CardGroup cols={2}>
+  <Card title="Commercial" icon="briefcase" href="/commercial">
+    Lead management, campaigns, partners, and CTS workflows.
+    `api.capedigital.co.ke/commercial`
+  </Card>
+  <Card title="Content" icon="newspaper" href="/content">
+    Stories, bulletins, lineup, digital posts, and broadcast integrations. `≈`
+  </Card>
+</CardGroup>

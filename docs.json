@@ -24,8 +24,12 @@
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "Commercial",
         "openapi": "https://api.capedigital.co.ke/commercial/api/schema"
+      },
+      {
+        "tab": "Content",
+        "openapi": "https://api.capedigital.co.ke/content/api/schema"
       }
     ],
     "global": {
