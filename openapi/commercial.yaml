@@ -9,7 +9,12 @@ paths:
   /api/v1/campaigns:
     get:
       operationId: campaigns_list
-      description: Campaign ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: List campaigns
       parameters:
       - name: cursor
@@ -56,7 +61,7 @@ paths:
           description: ''
     post:
       operationId: campaigns_create
-      description: Create a new {self.verbose_name}
+      description: Create a new campaign.
       summary: Create campaign
       tags:
       - Campaigns
@@ -100,7 +105,12 @@ paths:
   /api/v1/campaigns/{id}:
     get:
       operationId: campaigns_retrieve
-      description: Retrieve a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Get campaign
       parameters:
       - in: path
@@ -139,7 +149,7 @@ paths:
           description: ''
     put:
       operationId: campaigns_update
-      description: Update a {self.verbose_name}
+      description: Update an existing campaign.
       summary: Update campaign
       parameters:
       - in: path
@@ -190,7 +200,7 @@ paths:
           description: ''
     patch:
       operationId: campaigns_partial_update
-      description: Campaign ViewSet
+      description: Partially update a campaign.
       summary: Partial update campaign
       parameters:
       - in: path
@@ -240,7 +250,7 @@ paths:
           description: ''
     delete:
       operationId: campaigns_destroy
-      description: Campaign ViewSet
+      description: Delete a campaign.
       summary: Delete campaign
       parameters:
       - in: path
@@ -260,7 +270,12 @@ paths:
   /api/v1/campaigns/{id}/events:
     get:
       operationId: campaigns_events
-      description: Campaign ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: List campaign events
       parameters:
       - in: path
@@ -300,7 +315,12 @@ paths:
   /api/v1/campaigns/{id}/manage:
     post:
       operationId: campaigns_manage
-      description: Campaign ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Terminate, pause, or resume campaign
       parameters:
       - in: path
@@ -352,7 +372,12 @@ paths:
   /api/v1/campaigns/{id}/transition:
     post:
       operationId: campaigns_transition
-      description: Campaign ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Transition campaign workflow stage
       parameters:
       - in: path
@@ -623,7 +648,12 @@ paths:
           description: ''
     post:
       operationId: cts_create
-      description: Create a new {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       tags:
       - cts
       requestBody:
@@ -667,7 +697,12 @@ paths:
   /api/v1/cts/{id}:
     get:
       operationId: cts_retrieve
-      description: Retrieve a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Get CTS schedule
       parameters:
       - in: path
@@ -707,7 +742,12 @@ paths:
           description: ''
     put:
       operationId: cts_update
-      description: Update a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       parameters:
       - in: path
         name: id
@@ -1125,7 +1165,12 @@ paths:
   /api/v1/lead-categories:
     get:
       operationId: lead_categories_list
-      description: Lead Category ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: List lead categories
       parameters:
       - name: cursor
@@ -1153,7 +1198,12 @@ paths:
           description: ''
     post:
       operationId: lead_categories_create
-      description: Create a new {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Create lead category
       tags:
       - Lead Categories
@@ -1181,7 +1231,12 @@ paths:
   /api/v1/lead-categories/{id}:
     get:
       operationId: lead_categories_retrieve
-      description: Retrieve a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Get lead category
       parameters:
       - in: path
@@ -1204,7 +1259,12 @@ paths:
           description: ''
     put:
       operationId: lead_categories_update
-      description: Update a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Update lead category
       parameters:
       - in: path
@@ -1239,7 +1299,12 @@ paths:
           description: ''
     patch:
       operationId: lead_categories_partial_update
-      description: Lead Category ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Partial update lead category
       parameters:
       - in: path
@@ -1273,7 +1338,12 @@ paths:
           description: ''
     delete:
       operationId: lead_categories_destroy
-      description: Lead Category ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Delete lead category
       parameters:
       - in: path
@@ -1293,7 +1363,12 @@ paths:
   /api/v1/lead-sources:
     get:
       operationId: lead_sources_list
-      description: Lead Source ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: List lead sources
       parameters:
       - name: cursor
@@ -1321,7 +1396,12 @@ paths:
           description: ''
     post:
       operationId: lead_sources_create
-      description: Create a new {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Create lead source
       tags:
       - Lead Sources
@@ -1349,7 +1429,12 @@ paths:
   /api/v1/lead-sources/{id}:
     get:
       operationId: lead_sources_retrieve
-      description: Retrieve a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Get lead source
       parameters:
       - in: path
@@ -1372,7 +1457,12 @@ paths:
           description: ''
     put:
       operationId: lead_sources_update
-      description: Update a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Update lead source
       parameters:
       - in: path
@@ -1407,7 +1497,12 @@ paths:
           description: ''
     patch:
       operationId: lead_sources_partial_update
-      description: Lead Source ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Partial update lead source
       parameters:
       - in: path
@@ -1441,7 +1536,12 @@ paths:
           description: ''
     delete:
       operationId: lead_sources_destroy
-      description: Lead Source ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Delete lead source
       parameters:
       - in: path
@@ -1461,7 +1561,12 @@ paths:
   /api/v1/leads:
     get:
       operationId: leads_list
-      description: Lead ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: List leads
       parameters:
       - name: cursor
@@ -1518,7 +1623,12 @@ paths:
           description: ''
     post:
       operationId: leads_create
-      description: Create a new {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Create lead
       tags:
       - Leads
@@ -1587,7 +1697,12 @@ paths:
   /api/v1/leads/{id}:
     get:
       operationId: leads_retrieve
-      description: Retrieve a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Get lead
       parameters:
       - in: path
@@ -1636,7 +1751,12 @@ paths:
           description: ''
     put:
       operationId: leads_update
-      description: Update a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Update lead
       parameters:
       - in: path
@@ -1712,7 +1832,12 @@ paths:
           description: ''
     patch:
       operationId: leads_partial_update
-      description: Lead ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Partial update lead
       parameters:
       - in: path
@@ -1787,7 +1912,12 @@ paths:
           description: ''
     delete:
       operationId: leads_destroy
-      description: Lead ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Delete lead
       parameters:
       - in: path
@@ -1807,7 +1937,12 @@ paths:
   /api/v1/leads/{id}/events:
     get:
       operationId: leads_events
-      description: Lead ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: List lead events
       parameters:
       - in: path
@@ -1939,7 +2074,12 @@ paths:
   /api/v1/leads/{id}/transition:
     post:
       operationId: leads_transition
-      description: Lead ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Transition lead workflow stage
       parameters:
       - in: path
@@ -2772,7 +2912,12 @@ paths:
   /api/v1/products:
     get:
       operationId: products_list
-      description: Product ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: List products
       parameters:
       - name: cursor
@@ -2800,7 +2945,12 @@ paths:
           description: ''
     post:
       operationId: products_create
-      description: Create a new {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Create product
       tags:
       - Products
@@ -2828,7 +2978,12 @@ paths:
   /api/v1/products/{id}:
     get:
       operationId: products_retrieve
-      description: Retrieve a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Get product
       parameters:
       - in: path
@@ -2851,7 +3006,12 @@ paths:
           description: ''
     put:
       operationId: products_update
-      description: Update a {self.verbose_name}
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Update product
       parameters:
       - in: path
@@ -2886,7 +3046,12 @@ paths:
           description: ''
     patch:
       operationId: products_partial_update
-      description: Product ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Partial update product
       parameters:
       - in: path
@@ -2920,7 +3085,12 @@ paths:
           description: ''
     delete:
       operationId: products_destroy
-      description: Product ViewSet
+      description: |-
+        Base model view set providing standardized CRUD operations and error handling.
+
+        This view set enforces consistent response formats, error handling patterns,
+        and logging across all API endpoints. Subclasses must override the class
+        variables below.
       summary: Delete product
       parameters:
       - in: path
