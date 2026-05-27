@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Commercial Service API
-  version: 1.0.0 (v1)
+  version: 1.0.0
   description: "\n    **Commercial Service API** - Lead management and campaign workflow
     system.\n\n    ## Versioning\n    The API uses URL path versioning (e.g., `/api/v1/`,
     `/api/v2/`).\n    Current version: **v1**\n    "

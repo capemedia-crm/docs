@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Content Service API
-  version: 1.0.0 (v1)
+  version: 1.0.0
   description: "\n    **Content Service API** - Comprehensive content(story) and management
     system.\n    "
 paths:
@@ -494,7 +494,7 @@ paths:
                         id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                         name: John Doe
                         employee_number: EMP-001
-                      editor_in_chief:
+                      head_of_news:
                         id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                         name: Jane Smith
                         employee_number: EMP-002
@@ -559,7 +559,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -609,7 +609,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -682,7 +682,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -759,7 +759,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -853,7 +853,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -871,7 +871,7 @@ paths:
     get:
       operationId: bulletins_report
       description: GET /bulletins/{id}/report — full post-bulletin report snapshot.
-      summary: Get bulletin report
+      summary: Post-broadcast report snapshot for editor sign-off
       parameters:
       - in: path
         name: id
@@ -903,7 +903,81 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/{id}/review:
+    post:
+      operationId: bulletins_review
+      description: |-
+        POST /bulletins/{id}/review
+
+        Head of news marks the report as reviewed and closes it out.
+        reviewed_by is taken from the authenticated user — not the request body.
+        Report must be in awaiting_review state.
+
+        Body:
+          review_remarks (str, optional) — head of news review comments
+      summary: Complete bulletin report review
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Bulletin.
+        required: true
+      tags:
+      - Bulletins
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulletinReviewRequest'
+            examples:
+              CompleteReview:
+                value:
+                  review_remarks: Bulletin verified. Good coverage across all segments.
+                summary: Complete review
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BulletinReviewRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BulletinReviewRequest'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -953,7 +1027,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -1007,7 +1081,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -1080,7 +1154,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -1148,7 +1222,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -1194,9 +1268,8 @@ paths:
         PATCH /bulletins/{id}/stories/{story_id}/air
 
         Body:
-          airing_status   (str, required)  — "aired" | "not_aired"
-          remarks         (str, optional)  — rundown note
-          not_aired_reason (str, optional) — why the story didn't air
+          airing_status  (str, required)  — "aired" | "not_aired"
+          remarks        (str, optional)  — rundown note / reason not aired
       summary: Mark story air status
       parameters:
       - in: path
@@ -1226,7 +1299,7 @@ paths:
               NotAired:
                 value:
                   airing_status: not_aired
-                  not_aired_reason: Time constraint
+                  remarks: Time constraint
                 summary: Not aired
           application/x-www-form-urlencoded:
             schema:
@@ -1255,7 +1328,7 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -1273,7 +1346,7 @@ paths:
     get:
       operationId: bulletins_tracker
       description: GET /bulletins/{id}/tracker — live airing tracker.
-      summary: Get bulletin tracker
+      summary: Live airing board — real-time slot status during broadcast
       parameters:
       - in: path
         name: id
@@ -1305,7 +1378,107 @@ paths:
                       id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
                       name: John Doe
                       employee_number: EMP-001
-                    editor_in_chief:
+                    head_of_news:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/reports:
+    get:
+      operationId: bulletins_reports_list
+      description: |-
+        GET /bulletins/reports/
+
+        Returns bulletins grouped by platform (TV then Radio), each with
+        full story status counts and resolved editor. One DB query + one
+        user-service batch call — no N+1.
+
+        Query params:
+          date    (YYYY-MM-DD) — defaults to today
+          status  (draft | signed_off | awaiting_review | reviewed)
+      summary: List bulletin reports grouped by platform
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    head_of_news:
+                      id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
+                      name: Jane Smith
+                      employee_number: EMP-002
+                    presenters:
+                    - id: 5fa85f64-5717-4562-b3fc-2c963f66afa8
+                      name: Peter Kamau
+                      employee_number: EMP-003
+                    report_status: draft
+                    slots: []
+                    created_at: '2026-05-27T10:00:00Z'
+                    updated_at: '2026-05-27T10:00:00Z'
+                  summary: Bulletin response
+          description: ''
+  /api/v1/bulletins/reports-summary:
+    get:
+      operationId: bulletins_reports_summary
+      description: |-
+        GET /bulletins/reports-summary/
+
+        Aggregates for the summary cards: total, signed-off, awaiting sign-off,
+        avg air rate. Single DB query.
+
+        Query params:
+          date (YYYY-MM-DD) — defaults to today
+      summary: Day-level bulletin reports summary stats
+      tags:
+      - Bulletins
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bulletin'
+              examples:
+                BulletinResponse:
+                  value:
+                    id: 1fa85f64-5717-4562-b3fc-2c963f66afa1
+                    platform: television
+                    slot: evening
+                    scheduled_at: '2026-05-27T19:00:00Z'
+                    studio: Studio A
+                    slot_duration: 00:30:00
+                    editor_on_duty:
+                      id: 3c90c3cc-0d44-4b50-8888-8dd25736052a
+                      name: John Doe
+                      employee_number: EMP-001
+                    head_of_news:
                       id: 4fa85f64-5717-4562-b3fc-2c963f66afa7
                       name: Jane Smith
                       employee_number: EMP-002
@@ -3441,13 +3614,12 @@ components:
           format: uuid
           nullable: true
           description: User ID of the editor managing this bulletin
-        editor_in_chief:
+        head_of_news:
           type: string
           format: uuid
           readOnly: true
           nullable: true
-          description: User ID of the editor in chief / head of news who reviews the
-            report
+          description: User ID of the head of news who reviews the bulletin report
         presenters:
           type: array
           items:
@@ -3485,7 +3657,7 @@ components:
           readOnly: true
       required:
       - created_at
-      - editor_in_chief
+      - head_of_news
       - id
       - platform
       - report_status
@@ -3648,6 +3820,13 @@ components:
       - platform
       - scheduled_at
       - slot
+    BulletinReviewRequest:
+      type: object
+      description: Input for POST .../review
+      properties:
+        review_remarks:
+          type: string
+          default: ''
     BulletinSignOffRequest:
       type: object
       description: Input for POST .../sign-off
@@ -4040,9 +4219,6 @@ components:
             * `not_aired` - not_aired
           x-spec-enum-id: 39e68983a52ab35d
         remarks:
-          type: string
-          default: ''
-        not_aired_reason:
           type: string
           default: ''
     PatchedBroadcastScheduleListRequest:

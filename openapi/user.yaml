@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: CapeMedia User Service API
-  version: 1.0.0 (v1)
+  version: 1.0.0
   description: "\n    **CapeMedia User Service API** - Comprehensive user service
     and management system.\n\n    ## Authentication\n    This API uses **JWT Bearer
     tokens** for authentication.\n\n    1. Login via `/api/v1/auth/login` to obtain
@@ -20,7 +20,7 @@ paths:
       operationId: auth_correspondents_invite_retrieve
       description: List all correspondent users.
       tags:
-      - auth
+      - Correspondents
       security:
       - bearerAuth: []
       responses:
@@ -30,7 +30,7 @@ paths:
       operationId: auth_correspondents_invite_create
       description: Create and email a correspondent invitation.
       tags:
-      - auth
+      - Correspondents
       security:
       - bearerAuth: []
       responses:
@@ -48,7 +48,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - auth
+      - Correspondents
       security:
       - bearerAuth: []
       - {}
@@ -66,7 +66,7 @@ paths:
           format: uuid
         required: true
       tags:
-      - auth
+      - Correspondents
       security:
       - bearerAuth: []
       - {}
@@ -82,7 +82,7 @@ paths:
         Returns:
             Paginated response with serialized resource data.
       tags:
-      - auth
+      - Departments
       security:
       - bearerAuth: []
       responses:
@@ -105,7 +105,7 @@ paths:
         Returns:
             Response with created resource or error details
       tags:
-      - auth
+      - Departments
       requestBody:
         content:
           application/json:
@@ -142,7 +142,7 @@ paths:
         Returns:
             Response with updated resource or error details
       tags:
-      - auth
+      - Departments
       requestBody:
         content:
           application/json:
@@ -166,7 +166,7 @@ paths:
           description: ''
   /api/v1/auth/forgot-password:
     post:
-      operationId: auth_forgot_password_create
+      operationId: auth_forgot_password
       description: |-
         Initiate password reset process.
 
@@ -179,8 +179,9 @@ paths:
         - 200: Password reset email sent (or email not found - no distinction for security)
         - 400: Invalid email format
         - 500: Server error sending email
+      summary: Request password reset email
       tags:
-      - auth
+      - Authentication
       security:
       - bearerAuth: []
       - {}
@@ -189,14 +190,15 @@ paths:
           description: No response body
   /api/v1/auth/login:
     post:
-      operationId: auth_login_create
+      operationId: auth_login
       description: |-
         Authenticate user and obtain access tokens.
 
         This endpoint authenticates a user with Keycloak and returns
         JWT access and refresh tokens for API access.
+      summary: Login with username and password
       tags:
-      - auth
+      - Authentication
       security:
       - bearerAuth: []
       - {}
@@ -205,7 +207,7 @@ paths:
           description: No response body
   /api/v1/auth/logout:
     post:
-      operationId: auth_logout_create
+      operationId: auth_logout
       description: |-
         Logout user with immediate token invalidation.
 
@@ -215,8 +217,9 @@ paths:
         3. Terminates all Keycloak sessions for the user
 
         After logout, the access token is immediately invalid on all subsequent requests.
+      summary: Logout and invalidate tokens
       tags:
-      - auth
+      - Authentication
       security:
       - bearerAuth: []
       responses:
@@ -224,9 +227,10 @@ paths:
           description: No response body
   /api/v1/auth/me/modules:
     get:
-      operationId: auth_me_modules_retrieve
+      operationId: auth_me_modules
+      summary: Get current user accessible modules
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -234,10 +238,11 @@ paths:
           description: No response body
   /api/v1/auth/permissions:
     get:
-      operationId: auth_permissions_retrieve
-      description: List all client roles.
+      operationId: permissions_list
+      description: List all client permissions grouped by client.
+      summary: List client permissions
       tags:
-      - auth
+      - Permissions
       security:
       - bearerAuth: []
       responses:
@@ -245,10 +250,11 @@ paths:
           description: No response body
   /api/v1/auth/permissions/manage-permissions:
     post:
-      operationId: auth_permissions_manage_permissions_create
-      description: List all client roles.
+      operationId: permissions_manage
+      description: List all client permissions grouped by client.
+      summary: Assign or revoke permissions for a role
       tags:
-      - auth
+      - Permissions
       security:
       - bearerAuth: []
       responses:
@@ -256,10 +262,11 @@ paths:
           description: No response body
   /api/v1/auth/permissions/manage-user-permissions:
     post:
-      operationId: auth_permissions_manage_user_permissions_create
-      description: List all client roles.
+      operationId: permissions_manage_user
+      description: List all client permissions grouped by client.
+      summary: Assign or revoke permissions for a user
       tags:
-      - auth
+      - Permissions
       security:
       - bearerAuth: []
       responses:
@@ -267,13 +274,14 @@ paths:
           description: No response body
   /api/v1/auth/refresh-token:
     post:
-      operationId: auth_refresh_token_create
+      operationId: auth_token_refresh
       description: |-
         Refresh access token using refresh token.
 
         This endpoint refreshes an access token using a refresh token.
+      summary: Refresh access token
       tags:
-      - auth
+      - Authentication
       security:
       - bearerAuth: []
       responses:
@@ -281,10 +289,11 @@ paths:
           description: No response body
   /api/v1/auth/register:
     post:
-      operationId: auth_register_create
+      operationId: auth_register
       description: Register a new user.
+      summary: Register new user
       tags:
-      - auth
+      - Registration
       requestBody:
         content:
           application/json:
@@ -307,13 +316,14 @@ paths:
                 $ref: '#/components/schemas/Registration'
           description: ''
     put:
-      operationId: auth_register_update
+      operationId: auth_update_user
       description: |-
         Update a user.
 
         URL: PUT /api/v1/auth/users/<user_id>
+      summary: Update user
       tags:
-      - auth
+      - Registration
       requestBody:
         content:
           application/json:
@@ -336,10 +346,11 @@ paths:
                 $ref: '#/components/schemas/Registration'
           description: ''
     delete:
-      operationId: auth_register_destroy
+      operationId: auth_deactivate_user
       description: Deactivate a user.
+      summary: Deactivate user
       tags:
-      - auth
+      - Registration
       security:
       - bearerAuth: []
       responses:
@@ -347,10 +358,11 @@ paths:
           description: No response body
   /api/v1/auth/register-consumer:
     post:
-      operationId: auth_register_consumer_create
+      operationId: auth_register_consumer
       description: Register a new Cape Digi consumer account.
+      summary: Register Cape Digi consumer
       tags:
-      - auth
+      - Registration
       requestBody:
         content:
           application/json:
@@ -375,7 +387,7 @@ paths:
           description: ''
   /api/v1/auth/roles:
     get:
-      operationId: auth_roles_retrieve
+      operationId: roles_list
       description: |-
         List realm roles (all realm roles or department-specific realm roles).
 
@@ -384,18 +396,20 @@ paths:
         - department_id: Department UUID (required if type=department)
 
         Returns list of realm roles.
+      summary: List roles
       tags:
-      - auth
+      - Roles
       security:
       - bearerAuth: []
       responses:
         '200':
           description: No response body
     post:
-      operationId: auth_roles_create
+      operationId: roles_create
       description: Create a new realm role.
+      summary: Create role
       tags:
-      - auth
+      - Roles
       security:
       - bearerAuth: []
       responses:
@@ -403,8 +417,9 @@ paths:
           description: No response body
   /api/v1/auth/roles/{id}:
     get:
-      operationId: auth_roles_retrieve_2
+      operationId: roles_retrieve
       description: Retrieve a specific realm role by ID with members.
+      summary: Get role with members
       parameters:
       - in: path
         name: id
@@ -412,15 +427,16 @@ paths:
           type: string
         required: true
       tags:
-      - auth
+      - Roles
       security:
       - bearerAuth: []
       responses:
         '200':
           description: No response body
     put:
-      operationId: auth_roles_update
+      operationId: roles_update
       description: Update a realm role.
+      summary: Update role
       parameters:
       - in: path
         name: id
@@ -428,7 +444,7 @@ paths:
           type: string
         required: true
       tags:
-      - auth
+      - Roles
       security:
       - bearerAuth: []
       responses:
@@ -436,7 +452,7 @@ paths:
           description: No response body
   /api/v1/auth/roles/add-roles-to-department:
     post:
-      operationId: auth_roles_add_roles_to_department_create
+      operationId: roles_add_to_department
       description: |-
         Add existing realm roles to a department.
 
@@ -456,8 +472,9 @@ paths:
                 }
             ]
         }
+      summary: Add roles to department
       tags:
-      - auth
+      - Roles
       security:
       - bearerAuth: []
       responses:
@@ -465,10 +482,11 @@ paths:
           description: No response body
   /api/v1/auth/roles/manage-user-roles:
     post:
-      operationId: auth_roles_manage_user_roles_create
+      operationId: roles_manage_user_roles
       description: Assign or unassign a role to/from a user.
+      summary: Assign or unassign role to user
       tags:
-      - auth
+      - Roles
       security:
       - bearerAuth: []
       responses:
@@ -483,7 +501,7 @@ paths:
         Returns:
             Paginated response with serialized resource data.
       tags:
-      - auth
+      - Departments
       security:
       - bearerAuth: []
       responses:
@@ -506,7 +524,7 @@ paths:
         Returns:
             Response with created resource or error details
       tags:
-      - auth
+      - Departments
       requestBody:
         content:
           application/json:
@@ -543,7 +561,7 @@ paths:
         Returns:
             Response with updated resource or error details
       tags:
-      - auth
+      - Departments
       requestBody:
         content:
           application/json:
@@ -567,8 +585,9 @@ paths:
           description: ''
   /api/v1/auth/users:
     get:
-      operationId: auth_users_list
+      operationId: users_list
       description: List all users with pagination and filtering.
+      summary: List users
       parameters:
       - name: ordering
         required: false
@@ -599,7 +618,7 @@ paths:
         schema:
           type: string
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -611,8 +630,9 @@ paths:
           description: ''
   /api/v1/auth/users/{id}:
     get:
-      operationId: auth_users_retrieve
+      operationId: users_retrieve
       description: Retrieve a single user by ID.
+      summary: Get user
       parameters:
       - in: path
         name: id
@@ -622,7 +642,7 @@ paths:
         description: A UUID string identifying this User.
         required: true
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -634,8 +654,9 @@ paths:
           description: ''
   /api/v1/auth/users/{id}/events:
     get:
-      operationId: auth_users_events_retrieve
+      operationId: users_events
       description: Get Keycloak events for a specific user (cursor-paginated).
+      summary: Get user Keycloak events
       parameters:
       - in: path
         name: id
@@ -645,7 +666,7 @@ paths:
         description: A UUID string identifying this User.
         required: true
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -657,8 +678,9 @@ paths:
           description: ''
   /api/v1/auth/users/{id}/permissions:
     get:
-      operationId: auth_users_permissions_retrieve
+      operationId: users_permissions
       description: Get all client-role permissions for a user, grouped by client.
+      summary: Get user permissions
       parameters:
       - in: path
         name: id
@@ -668,7 +690,7 @@ paths:
         description: A UUID string identifying this User.
         required: true
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -680,13 +702,14 @@ paths:
           description: ''
   /api/v1/auth/users/by-permission:
     post:
-      operationId: auth_users_by_permission_create
+      operationId: users_by_permission
       description: |-
         Fetch users by permissions.
         - Default: returns list[user_id]
         - ?expand=true: returns list[{user_id, username, name}]
+      summary: Fetch users by permission
       tags:
-      - auth
+      - Users
       requestBody:
         content:
           application/json:
@@ -710,7 +733,7 @@ paths:
           description: ''
   /api/v1/auth/users/by-role:
     get:
-      operationId: auth_users_by_role_retrieve
+      operationId: users_by_role
       description: |-
         ViewSet for user operations.
 
@@ -718,8 +741,9 @@ paths:
         - List users with pagination, search, and filtering
         - Retrieve individual user details
         - Get current user info from Keycloak token
+      summary: Fetch users by role
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -731,10 +755,11 @@ paths:
           description: ''
   /api/v1/auth/users/department-members:
     get:
-      operationId: auth_users_department_members_retrieve
+      operationId: users_department_members
       description: list department members
+      summary: List department members
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -746,10 +771,11 @@ paths:
           description: ''
   /api/v1/auth/users/fetch-users:
     post:
-      operationId: auth_users_fetch_users_create
+      operationId: users_fetch
       description: Fetch users by IDs.
+      summary: Fetch users by IDs
       tags:
-      - auth
+      - Users
       requestBody:
         content:
           application/json:
@@ -773,10 +799,11 @@ paths:
           description: ''
   /api/v1/auth/users/manage-users:
     put:
-      operationId: auth_users_manage_users_update
+      operationId: users_manage
       description: Manage users.
+      summary: Activate or suspend user
       tags:
-      - auth
+      - Users
       requestBody:
         content:
           application/json:
@@ -800,10 +827,11 @@ paths:
           description: ''
   /api/v1/auth/users/section-members:
     get:
-      operationId: auth_users_section_members_retrieve
+      operationId: users_section_members
       description: list section members
+      summary: List section members
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -815,13 +843,14 @@ paths:
           description: ''
   /api/v1/auth/users/stats:
     get:
-      operationId: auth_users_stats_retrieve
+      operationId: users_stats
       description: |-
         Get users statistics.
 
         Returns counts of total, active, and inactive users.
+      summary: Get users statistics
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -833,10 +862,11 @@ paths:
           description: ''
   /api/v1/auth/users/update-profile:
     patch:
-      operationId: auth_users_update_profile_partial_update
+      operationId: users_update_profile
       description: Update the authenticated user's own profile.
+      summary: Update own profile
       tags:
-      - auth
+      - Users
       requestBody:
         content:
           application/json:
@@ -859,15 +889,16 @@ paths:
           description: ''
   /api/v1/auth/users/user-info:
     get:
-      operationId: auth_users_user_info_retrieve
+      operationId: users_user_info
       description: |-
         Get current authenticated user information.
 
         Returns enriched user data combining:
         - Keycloak token claims (roles, groups, etc.)
         - Django profile data (department, employee number, etc.)
+      summary: Get current user info
       tags:
-      - auth
+      - Users
       security:
       - bearerAuth: []
       responses:
@@ -879,10 +910,11 @@ paths:
           description: ''
   /api/v1/auth/verify-otp:
     post:
-      operationId: auth_verify_otp_create
+      operationId: auth_verify_otp
       description: Verify OTP for user.
+      summary: Verify OTP and get JWT tokens
       tags:
-      - auth
+      - Authentication
       security:
       - bearerAuth: []
       - {}
