@@ -25,17 +25,37 @@ paths:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorrespondentUser'
+          description: ''
     post:
       operationId: auth_correspondents_invite_create
       description: Create and email a correspondent invitation.
       tags:
       - Correspondents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorrespondentInviteRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CorrespondentInviteRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CorrespondentInviteRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorrespondentUser'
+          description: ''
   /api/v1/auth/correspondents/invite/{token}:
     get:
       operationId: auth_correspondents_invite_retrieve_2
@@ -53,8 +73,12 @@ paths:
       - bearerAuth: []
       - {}
       responses:
-        '200':
-          description: No response body
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorrespondentUser'
+          description: ''
     post:
       operationId: auth_correspondents_invite_create_2
       description: Complete self-registration using an invitation token.
@@ -67,12 +91,28 @@ paths:
         required: true
       tags:
       - Correspondents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CorrespondentRegisterRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CorrespondentRegisterRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CorrespondentRegisterRequest'
+        required: true
       security:
       - bearerAuth: []
       - {}
       responses:
-        '200':
-          description: No response body
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorrespondentUser'
+          description: ''
   /api/v1/auth/department:
     get:
       operationId: auth_department_retrieve
@@ -182,6 +222,18 @@ paths:
       summary: Request password reset email
       tags:
       - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+        required: true
       security:
       - bearerAuth: []
       - {}
@@ -199,12 +251,44 @@ paths:
       summary: Login with username and password
       tags:
       - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              Login:
+                value:
+                  username: john.doe@capemedia.co.ke
+                  password: secret
+                  realm: capemedia
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
       security:
       - bearerAuth: []
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyOTP'
+              examples:
+                VerifyOTPResponse:
+                  value:
+                    status: success
+                    message: OTP verified successfully
+                    data:
+                      access_token: eyJ...
+                      refresh_token: eyJ...
+                      expires_in: 300
+                  summary: Verify OTP response
+          description: ''
   /api/v1/auth/logout:
     post:
       operationId: auth_logout
@@ -220,6 +304,24 @@ paths:
       summary: Logout and invalidate tokens
       tags:
       - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequestRequest'
+            examples:
+              RefreshToken:
+                value:
+                  refresh_token: eyJhbGciOiJSUzI1NiJ9...
+                  realm: capemedia
+                summary: Refresh token
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequestRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
@@ -239,7 +341,6 @@ paths:
   /api/v1/auth/permissions:
     get:
       operationId: permissions_list
-      description: List all client permissions grouped by client.
       summary: List client permissions
       tags:
       - Permissions
@@ -247,31 +348,67 @@ paths:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ManageRolePermissions'
+          description: ''
   /api/v1/auth/permissions/manage-permissions:
     post:
       operationId: permissions_manage
-      description: List all client permissions grouped by client.
       summary: Assign or revoke permissions for a role
       tags:
       - Permissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageRolePermissionsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ManageRolePermissionsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ManageRolePermissionsRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManageRolePermissions'
+          description: ''
   /api/v1/auth/permissions/manage-user-permissions:
     post:
       operationId: permissions_manage_user
-      description: List all client permissions grouped by client.
       summary: Assign or revoke permissions for a user
       tags:
       - Permissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageRolePermissionsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ManageRolePermissionsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ManageRolePermissionsRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManageRolePermissions'
+          description: ''
   /api/v1/auth/refresh-token:
     post:
       operationId: auth_token_refresh
@@ -282,11 +419,43 @@ paths:
       summary: Refresh access token
       tags:
       - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequestRequest'
+            examples:
+              RefreshToken:
+                value:
+                  refresh_token: eyJhbGciOiJSUzI1NiJ9...
+                  realm: capemedia
+                summary: Refresh token
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequestRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyOTP'
+              examples:
+                VerifyOTPResponse:
+                  value:
+                    status: success
+                    message: OTP verified successfully
+                    data:
+                      access_token: eyJ...
+                      refresh_token: eyJ...
+                      expires_in: 300
+                  summary: Verify OTP response
+          description: ''
   /api/v1/auth/register:
     post:
       operationId: auth_register
@@ -403,18 +572,40 @@ paths:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreateListRole'
+          description: ''
     post:
       operationId: roles_create
       description: Create a new realm role.
       summary: Create role
       tags:
       - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
         '201':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateListRole'
+          description: ''
   /api/v1/auth/roles/{id}:
     get:
       operationId: roles_retrieve
@@ -432,7 +623,11 @@ paths:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateListRole'
+          description: ''
     put:
       operationId: roles_update
       description: Update a realm role.
@@ -445,11 +640,27 @@ paths:
         required: true
       tags:
       - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateListRole'
+          description: ''
   /api/v1/auth/roles/add-roles-to-department:
     post:
       operationId: roles_add_to_department
@@ -475,11 +686,27 @@ paths:
       summary: Add roles to department
       tags:
       - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateListRole'
+          description: ''
   /api/v1/auth/roles/manage-user-roles:
     post:
       operationId: roles_manage_user_roles
@@ -487,11 +714,27 @@ paths:
       summary: Assign or unassign role to user
       tags:
       - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateListRoleRequest'
+        required: true
       security:
       - bearerAuth: []
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateListRole'
+          description: ''
   /api/v1/auth/section:
     get:
       operationId: auth_section_retrieve
@@ -915,12 +1158,46 @@ paths:
       summary: Verify OTP and get JWT tokens
       tags:
       - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+            examples:
+              VerifyOTPRequest:
+                value:
+                  username: john.doe@capemedia.co.ke
+                  password: secret
+                  otp: '123456'
+                  realm: capemedia
+                summary: Verify OTP request
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+        required: true
       security:
       - bearerAuth: []
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyOTP'
+              examples:
+                VerifyOTPResponse:
+                  value:
+                    status: success
+                    message: OTP verified successfully
+                    data:
+                      access_token: eyJ...
+                      refresh_token: eyJ...
+                      expires_in: 300
+                  summary: Verify OTP response
+          description: ''
 components:
   schemas:
     ConsumerRegistration:
@@ -978,6 +1255,121 @@ components:
       - first_name
       - last_name
       - password
+    CorrespondentInviteRequest:
+      type: object
+      description: Validate an invitation request sent by an internal editor/producer.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        notes:
+          type: string
+          default: ''
+      required:
+      - email
+    CorrespondentRegisterRequest:
+      type: object
+      description: Validate the self-registration payload submitted by a correspondent.
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 150
+        country_code:
+          type: string
+          minLength: 1
+          maxLength: 3
+        phone_number:
+          type: string
+          minLength: 1
+          maxLength: 50
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+      required:
+      - country_code
+      - first_name
+      - last_name
+      - password
+      - phone_number
+    CorrespondentUser:
+      type: object
+      description: Lightweight serializer for listing correspondent users.
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+        name:
+          type: string
+          readOnly: true
+        phone_number:
+          type: string
+          maxLength: 50
+        status:
+          type: string
+          maxLength: 20
+        date_joined:
+          type: string
+          format: date-time
+      required:
+      - id
+      - name
+    CreateListRole:
+      type: object
+      description: Serializer for Keycloak role information.
+      properties:
+        name:
+          type: string
+          description: Role name
+        description:
+          type: string
+          default: ''
+          description: Role description
+        id:
+          type: string
+          readOnly: true
+          description: Role ID (UUID)
+      required:
+      - id
+      - name
+    CreateListRoleRequest:
+      type: object
+      description: Serializer for Keycloak role information.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Role name
+        description:
+          type: string
+          default: ''
+          description: Role description
+        department_id:
+          type: string
+          format: uuid
+          writeOnly: true
+          description: Department ID
+      required:
+      - department_id
+      - name
     Department:
       type: object
       description: Efficient serializer for Department.
@@ -1015,6 +1407,17 @@ components:
           minLength: 1
       required:
       - name
+    ForgotPasswordRequest:
+      type: object
+      description: Serializer for password reset request.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          description: Email address associated with your account
+      required:
+      - email
     ListUsers:
       type: object
       description: Serializer for listing users with department information.
@@ -1102,6 +1505,76 @@ components:
           nullable: true
       required:
       - username
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Username or email
+        password:
+          type: string
+          minLength: 1
+          description: Password
+        realm:
+          type: string
+          minLength: 1
+          default: capemedia
+          description: Keycloak realm name (e.g. 'capemedia', 'capedigi'). Defaults
+            to primary realm.
+      required:
+      - password
+      - username
+    ManageRolePermissions:
+      type: object
+      description: Serializer for assigning permissions to a role.
+      properties:
+        permissions:
+          type: array
+          items:
+            type: string
+          description: Permissions
+        action_type:
+          enum:
+          - assign
+          - revoke
+          type: string
+          description: |-
+            * `assign` - assign
+            * `revoke` - revoke
+          x-spec-enum-id: a0c54a429880861c
+        role_id:
+          type: string
+          description: Role ID
+      required:
+      - action_type
+      - permissions
+    ManageRolePermissionsRequest:
+      type: object
+      description: Serializer for assigning permissions to a role.
+      properties:
+        permissions:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          description: Permissions
+        action_type:
+          enum:
+          - assign
+          - revoke
+          type: string
+          description: |-
+            * `assign` - assign
+            * `revoke` - revoke
+          x-spec-enum-id: a0c54a429880861c
+        role_id:
+          type: string
+          minLength: 1
+          description: Role ID
+      required:
+      - action_type
+      - permissions
     PaginatedListUsersList:
       type: object
       required:
@@ -1159,6 +1632,20 @@ components:
           type: string
           format: date-time
           nullable: true
+    RefreshTokenRequestRequest:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          description: Refresh token to invalidate
+        realm:
+          type: string
+          minLength: 1
+          default: capemedia
+          description: Keycloak realm name. Must match the realm used at login.
+      required:
+      - refresh_token
     Registration:
       type: object
       description: |-
@@ -1327,6 +1814,52 @@ components:
       required:
       - department_id
       - name
+    VerifyOTP:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Username or email
+        password:
+          type: string
+          description: Password
+        realm:
+          type: string
+          default: capemedia
+          description: Keycloak realm name (e.g. 'capemedia', 'capedigi'). Defaults
+            to primary realm.
+        otp:
+          type: string
+          description: OTP
+      required:
+      - otp
+      - password
+      - username
+    VerifyOTPRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Username or email
+        password:
+          type: string
+          minLength: 1
+          description: Password
+        realm:
+          type: string
+          minLength: 1
+          default: capemedia
+          description: Keycloak realm name (e.g. 'capemedia', 'capedigi'). Defaults
+            to primary realm.
+        otp:
+          type: string
+          minLength: 1
+          description: OTP
+      required:
+      - otp
+      - password
+      - username
   securitySchemes:
     bearerAuth:
       type: http
