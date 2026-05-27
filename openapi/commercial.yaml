@@ -10,6 +10,7 @@ paths:
     get:
       operationId: campaigns_list
       description: Campaign ViewSet
+      summary: List campaigns
       parameters:
       - name: cursor
         required: false
@@ -24,7 +25,7 @@ paths:
         schema:
           type: integer
       tags:
-      - campaigns
+      - Campaigns
       security:
       - bearerAuth: []
       responses:
@@ -33,6 +34,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedCampaignList'
+              examples:
+                CampaignResponse:
+                  value:
+                    next: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+                    previous: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+                    results:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      reference: CP-2024-001
+                      start_date: '2024-02-01'
+                      end_date: '2024-02-28'
+                      status: Campaign In Progress
+                      node: on_air
+                      company_name: ABC Corporation
+                      products:
+                      - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                        name: TV Spot 30s
+                      created_at: '2024-01-15T08:00:00Z'
+                      updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
     post:
       operationId: campaigns_create
@@ -59,11 +79,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
   /api/v1/campaigns/{id}:
     get:
       operationId: campaigns_retrieve
       description: Retrieve a {self.verbose_name}
+      summary: Get campaign
       parameters:
       - in: path
         name: id
@@ -73,7 +110,7 @@ paths:
         description: A UUID string identifying this Campaign.
         required: true
       tags:
-      - campaigns
+      - Campaigns
       security:
       - bearerAuth: []
       responses:
@@ -82,6 +119,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CampaignDetail'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
     put:
       operationId: campaigns_update
@@ -116,6 +169,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
     patch:
       operationId: campaigns_partial_update
@@ -149,6 +218,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
     delete:
       operationId: campaigns_destroy
@@ -170,8 +255,9 @@ paths:
           description: No response body
   /api/v1/campaigns/{id}/events:
     get:
-      operationId: campaigns_events_retrieve
+      operationId: campaigns_events
       description: Campaign ViewSet
+      summary: List campaign events
       parameters:
       - in: path
         name: id
@@ -181,7 +267,7 @@ paths:
         description: A UUID string identifying this Campaign.
         required: true
       tags:
-      - campaigns
+      - Campaigns
       security:
       - bearerAuth: []
       responses:
@@ -190,11 +276,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
   /api/v1/campaigns/{id}/manage:
     post:
-      operationId: campaigns_manage_create
+      operationId: campaigns_manage
       description: Campaign ViewSet
+      summary: Terminate, pause, or resume campaign
       parameters:
       - in: path
         name: id
@@ -204,7 +307,7 @@ paths:
         description: A UUID string identifying this Campaign.
         required: true
       tags:
-      - campaigns
+      - Campaigns
       requestBody:
         content:
           application/json:
@@ -225,11 +328,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
   /api/v1/campaigns/{id}/transition:
     post:
-      operationId: campaigns_transition_create
+      operationId: campaigns_transition
       description: Campaign ViewSet
+      summary: Transition campaign workflow stage
       parameters:
       - in: path
         name: id
@@ -239,7 +359,7 @@ paths:
         description: A UUID string identifying this Campaign.
         required: true
       tags:
-      - campaigns
+      - Campaigns
       requestBody:
         content:
           application/json:
@@ -260,18 +380,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
   /api/v1/campaigns/analytics/delivery:
     get:
-      operationId: campaigns_analytics_delivery_retrieve
+      operationId: campaigns_analytics_delivery
       description: |-
         GET /api/v1/campaigns/analytics/delivery
 
         Query params (optional):
           start_date=YYYY-MM-DD  — filters on campaign start_date
           end_date=YYYY-MM-DD
+      summary: Campaign delivery analytics
       tags:
-      - campaigns
+      - Campaign Analytics
       security:
       - bearerAuth: []
       responses:
@@ -280,10 +417,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
   /api/v1/campaigns/analytics/snapshot:
     get:
-      operationId: campaigns_analytics_snapshot_retrieve
+      operationId: campaigns_analytics_snapshot
       description: |-
         GET /api/v1/campaigns/analytics/snapshot
 
@@ -294,8 +447,9 @@ paths:
           period=today|this_week|this_month|this_year
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Campaign status snapshot analytics
       tags:
-      - campaigns
+      - Campaign Analytics
       security:
       - bearerAuth: []
       responses:
@@ -304,10 +458,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
   /api/v1/campaigns/by-status:
     get:
-      operationId: campaigns_by_status_retrieve
+      operationId: campaigns_by_status
       description: |-
         GET /api/v1/campaigns/by-status?status=live|paused|terminated
 
@@ -318,8 +488,9 @@ paths:
           period=today|this_week|this_month|this_year
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: List campaigns by status
       tags:
-      - campaigns
+      - Campaigns
       security:
       - bearerAuth: []
       responses:
@@ -328,16 +499,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
   /api/v1/campaigns/callback:
     post:
-      operationId: campaigns_callback_create
+      operationId: campaigns_callback
       description: |-
         POST /api/v1/campaigns/callback
 
         Callback from the inventory service.
+      summary: Inventory service callback
       tags:
-      - campaigns
+      - Campaigns
       requestBody:
         content:
           application/json:
@@ -358,6 +546,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Campaign'
+              examples:
+                CampaignResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: CP-2024-001
+                    start_date: '2024-02-01'
+                    end_date: '2024-02-28'
+                    status: Campaign In Progress
+                    node: on_air
+                    company_name: ABC Corporation
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Campaign response
           description: ''
   /api/v1/cts:
     get:
@@ -368,6 +572,7 @@ paths:
         This view set enforces consistent response formats, error handling patterns,
         and logging across all API endpoints. Subclasses must override the class
         variables below.
+      summary: List CTS schedules
       parameters:
       - name: cursor
         required: false
@@ -382,7 +587,7 @@ paths:
         schema:
           type: integer
       tags:
-      - cts
+      - CTS
       security:
       - bearerAuth: []
       responses:
@@ -391,6 +596,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedCTSListList'
+              examples:
+                CTSSchedule:
+                  value:
+                    next: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+                    previous: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+                    results:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      medium: TV
+                      channel: TV47
+                      date: '2024-02-05'
+                      day_of_week: Monday
+                      title: TV47 CTS 05-02-2024
+                      uploaded_by:
+                        id: uuid
+                        name: John Doe
+                      slot_count: 24
+                      metadata: {}
+                      created_at: '2024-02-05T06:00:00Z'
+                      updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
     post:
       operationId: cts_create
@@ -417,11 +642,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
   /api/v1/cts/{id}:
     get:
       operationId: cts_retrieve
       description: Retrieve a {self.verbose_name}
+      summary: Get CTS schedule
       parameters:
       - in: path
         name: id
@@ -431,7 +674,7 @@ paths:
         description: A UUID string identifying this Commercial Transmission Schedule.
         required: true
       tags:
-      - cts
+      - CTS
       security:
       - bearerAuth: []
       responses:
@@ -440,6 +683,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSDetail'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
     put:
       operationId: cts_update
@@ -474,6 +734,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
     patch:
       operationId: cts_partial_update
@@ -512,6 +789,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
     delete:
       operationId: cts_destroy
@@ -521,6 +815,7 @@ paths:
         This view set enforces consistent response formats, error handling patterns,
         and logging across all API endpoints. Subclasses must override the class
         variables below.
+      summary: Delete CTS schedule
       parameters:
       - in: path
         name: id
@@ -530,7 +825,7 @@ paths:
         description: A UUID string identifying this Commercial Transmission Schedule.
         required: true
       tags:
-      - cts
+      - CTS
       security:
       - bearerAuth: []
       responses:
@@ -538,13 +833,14 @@ paths:
           description: No response body
   /api/v1/cts/{id}/export:
     post:
-      operationId: cts_export_create
+      operationId: cts_export
       description: |-
         Base model view set providing standardized CRUD operations and error handling.
 
         This view set enforces consistent response formats, error handling patterns,
         and logging across all API endpoints. Subclasses must override the class
         variables below.
+      summary: Export CTS to Excel
       parameters:
       - in: path
         name: id
@@ -554,7 +850,7 @@ paths:
         description: A UUID string identifying this Commercial Transmission Schedule.
         required: true
       tags:
-      - cts
+      - CTS
       requestBody:
         content:
           application/json:
@@ -575,16 +871,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
   /api/v1/cts/{id}/slots:
     get:
-      operationId: cts_slots_retrieve
+      operationId: cts_slots
       description: |-
         Base model view set providing standardized CRUD operations and error handling.
 
         This view set enforces consistent response formats, error handling patterns,
         and logging across all API endpoints. Subclasses must override the class
         variables below.
+      summary: List CTS slots
       parameters:
       - in: path
         name: id
@@ -594,7 +908,7 @@ paths:
         description: A UUID string identifying this Commercial Transmission Schedule.
         required: true
       tags:
-      - cts
+      - CTS
       security:
       - bearerAuth: []
       responses:
@@ -603,16 +917,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
   /api/v1/cts/{id}/slots/{slot_id}:
     patch:
-      operationId: cts_slots_partial_update
+      operationId: cts_update_slot
       description: |-
         Base model view set providing standardized CRUD operations and error handling.
 
         This view set enforces consistent response formats, error handling patterns,
         and logging across all API endpoints. Subclasses must override the class
         variables below.
+      summary: Update a commercial slot
       parameters:
       - in: path
         name: id
@@ -627,7 +959,7 @@ paths:
           type: string
         required: true
       tags:
-      - cts
+      - CTS
       requestBody:
         content:
           application/json:
@@ -647,11 +979,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
   /api/v1/cts/{id}/timeline:
     get:
-      operationId: cts_timeline_retrieve
+      operationId: cts_timeline
       description: Return slots grouped by time_slot for a visual timeline.
+      summary: Get CTS timeline grouped by time slot
       parameters:
       - in: path
         name: id
@@ -661,7 +1011,7 @@ paths:
         description: A UUID string identifying this Commercial Transmission Schedule.
         required: true
       tags:
-      - cts
+      - CTS
       security:
       - bearerAuth: []
       responses:
@@ -670,13 +1020,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
   /api/v1/cts/analytics:
     get:
-      operationId: cts_analytics_retrieve
+      operationId: cts_analytics
       description: 'Aggregate stats: slots per company.'
+      summary: CTS analytics - slots per company
       tags:
-      - cts
+      - CTS
       security:
       - bearerAuth: []
       responses:
@@ -685,18 +1053,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
   /api/v1/cts/upload:
     post:
-      operationId: cts_upload_create
+      operationId: cts_upload
       description: |-
         Base model view set providing standardized CRUD operations and error handling.
 
         This view set enforces consistent response formats, error handling patterns,
         and logging across all API endpoints. Subclasses must override the class
         variables below.
+      summary: Upload CTS Excel file
       tags:
-      - cts
+      - CTS
       requestBody:
         content:
           multipart/form-data:
@@ -714,11 +1100,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CTSList'
+              examples:
+                CTSSchedule:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    medium: TV
+                    channel: TV47
+                    date: '2024-02-05'
+                    day_of_week: Monday
+                    title: TV47 CTS 05-02-2024
+                    uploaded_by:
+                      id: uuid
+                      name: John Doe
+                    slot_count: 24
+                    metadata: {}
+                    created_at: '2024-02-05T06:00:00Z'
+                    updated_at: '2024-02-05T06:00:00Z'
+                  summary: CTS schedule
           description: ''
   /api/v1/lead-categories:
     get:
       operationId: lead_categories_list
       description: Lead Category ViewSet
+      summary: List lead categories
       parameters:
       - name: cursor
         required: false
@@ -733,7 +1137,7 @@ paths:
         schema:
           type: integer
       tags:
-      - lead-categories
+      - Lead Categories
       security:
       - bearerAuth: []
       responses:
@@ -746,8 +1150,9 @@ paths:
     post:
       operationId: lead_categories_create
       description: Create a new {self.verbose_name}
+      summary: Create lead category
       tags:
-      - lead-categories
+      - Lead Categories
       requestBody:
         content:
           application/json:
@@ -773,6 +1178,7 @@ paths:
     get:
       operationId: lead_categories_retrieve
       description: Retrieve a {self.verbose_name}
+      summary: Get lead category
       parameters:
       - in: path
         name: id
@@ -782,7 +1188,7 @@ paths:
         description: A UUID string identifying this Lead Category.
         required: true
       tags:
-      - lead-categories
+      - Lead Categories
       security:
       - bearerAuth: []
       responses:
@@ -881,6 +1287,7 @@ paths:
     get:
       operationId: lead_sources_list
       description: Lead Source ViewSet
+      summary: List lead sources
       parameters:
       - name: cursor
         required: false
@@ -895,7 +1302,7 @@ paths:
         schema:
           type: integer
       tags:
-      - lead-sources
+      - Lead Sources
       security:
       - bearerAuth: []
       responses:
@@ -908,8 +1315,9 @@ paths:
     post:
       operationId: lead_sources_create
       description: Create a new {self.verbose_name}
+      summary: Create lead source
       tags:
-      - lead-sources
+      - Lead Sources
       requestBody:
         content:
           application/json:
@@ -935,6 +1343,7 @@ paths:
     get:
       operationId: lead_sources_retrieve
       description: Retrieve a {self.verbose_name}
+      summary: Get lead source
       parameters:
       - in: path
         name: id
@@ -944,7 +1353,7 @@ paths:
         description: A UUID string identifying this Lead Source.
         required: true
       tags:
-      - lead-sources
+      - Lead Sources
       security:
       - bearerAuth: []
       responses:
@@ -1043,6 +1452,7 @@ paths:
     get:
       operationId: leads_list
       description: Lead ViewSet
+      summary: List leads
       parameters:
       - name: cursor
         required: false
@@ -1057,7 +1467,7 @@ paths:
         schema:
           type: integer
       tags:
-      - leads
+      - Leads
       security:
       - bearerAuth: []
       responses:
@@ -1066,17 +1476,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedLeadList'
+              examples:
+                LeadResponse:
+                  value:
+                    next: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+                    previous: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+                    results:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      reference: LD-2024-001
+                      name: ABC Corporation
+                      contact_person: Jane Smith
+                      contact_phone: '+254700000000'
+                      contact_email: jane@abc.co.ke
+                      lead_type: corporate
+                      gender: F
+                      lead_category:
+                        id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                        name: New Business
+                      source:
+                        id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                        name: Cold Call
+                      partner: null
+                      products:
+                      - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                        name: TV Spot 30s
+                      status: New Lead
+                      node: capture
+                      created_at: '2024-01-15T08:00:00Z'
+                      updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
     post:
       operationId: leads_create
       description: Create a new {self.verbose_name}
+      summary: Create lead
       tags:
-      - leads
+      - Leads
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LeadRequest'
+            examples:
+              CreateLead:
+                value:
+                  name: ABC Corporation
+                  contact_person: Jane Smith
+                  contact_phone: '+254700000000'
+                  contact_email: jane@abc.co.ke
+                  lead_type: corporate
+                  gender: F
+                  lead_category: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  source: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  partner: null
+                  products:
+                  - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                summary: Create lead
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/LeadRequest'
@@ -1092,11 +1547,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/{id}:
     get:
       operationId: leads_retrieve
       description: Retrieve a {self.verbose_name}
+      summary: Get lead
       parameters:
       - in: path
         name: id
@@ -1106,7 +1588,7 @@ paths:
         description: A UUID string identifying this Lead.
         required: true
       tags:
-      - leads
+      - Leads
       security:
       - bearerAuth: []
       responses:
@@ -1115,6 +1597,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LeadDetail'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
     put:
       operationId: leads_update
@@ -1134,6 +1642,21 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LeadRequest'
+            examples:
+              CreateLead:
+                value:
+                  name: ABC Corporation
+                  contact_person: Jane Smith
+                  contact_phone: '+254700000000'
+                  contact_email: jane@abc.co.ke
+                  lead_type: corporate
+                  gender: F
+                  lead_category: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  source: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  partner: null
+                  products:
+                  - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                summary: Create lead
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/LeadRequest'
@@ -1149,6 +1672,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
     patch:
       operationId: leads_partial_update
@@ -1168,6 +1717,21 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchedLeadRequest'
+            examples:
+              CreateLead:
+                value:
+                  name: ABC Corporation
+                  contact_person: Jane Smith
+                  contact_phone: '+254700000000'
+                  contact_email: jane@abc.co.ke
+                  lead_type: corporate
+                  gender: F
+                  lead_category: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  source: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  partner: null
+                  products:
+                  - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                summary: Create lead
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/PatchedLeadRequest'
@@ -1182,6 +1746,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
     delete:
       operationId: leads_destroy
@@ -1203,8 +1793,9 @@ paths:
           description: No response body
   /api/v1/leads/{id}/events:
     get:
-      operationId: leads_events_retrieve
+      operationId: leads_events
       description: Lead ViewSet
+      summary: List lead events
       parameters:
       - in: path
         name: id
@@ -1214,7 +1805,7 @@ paths:
         description: A UUID string identifying this Lead.
         required: true
       tags:
-      - leads
+      - Leads
       security:
       - bearerAuth: []
       responses:
@@ -1223,16 +1814,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/{id}/stage-booking:
     post:
-      operationId: leads_stage_booking_create
+      operationId: leads_stage_booking
       description: |-
         Callback from inv-service after send-to-transit.
 
         Resolves the campaign from the lead and fires the stage_booking
         transition on the campaign so the event and node update land on
         the correct entity.
+      summary: Stage booking callback from inventory service
       parameters:
       - in: path
         name: id
@@ -1242,12 +1860,27 @@ paths:
         description: A UUID string identifying this Lead.
         required: true
       tags:
-      - leads
+      - Leads
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LeadRequest'
+            examples:
+              CreateLead:
+                value:
+                  name: ABC Corporation
+                  contact_person: Jane Smith
+                  contact_phone: '+254700000000'
+                  contact_email: jane@abc.co.ke
+                  lead_type: corporate
+                  gender: F
+                  lead_category: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  source: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  partner: null
+                  products:
+                  - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                summary: Create lead
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/LeadRequest'
@@ -1263,11 +1896,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/{id}/transition:
     post:
-      operationId: leads_transition_create
+      operationId: leads_transition
       description: Lead ViewSet
+      summary: Transition lead workflow stage
       parameters:
       - in: path
         name: id
@@ -1277,12 +1937,27 @@ paths:
         description: A UUID string identifying this Lead.
         required: true
       tags:
-      - leads
+      - Leads
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/LeadRequest'
+            examples:
+              CreateLead:
+                value:
+                  name: ABC Corporation
+                  contact_person: Jane Smith
+                  contact_phone: '+254700000000'
+                  contact_email: jane@abc.co.ke
+                  lead_type: corporate
+                  gender: F
+                  lead_category: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  source: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  partner: null
+                  products:
+                  - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                summary: Create lead
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/LeadRequest'
@@ -1298,10 +1973,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/analytics/assigned:
     get:
-      operationId: leads_analytics_assigned_retrieve
+      operationId: leads_analytics_assigned
       description: |-
         GET /api/v1/leads/analytics/assigned
 
@@ -1312,8 +2013,9 @@ paths:
           period=today|this_week|this_month|this_year
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Lead assignment analytics
       tags:
-      - leads
+      - Lead Analytics
       security:
       - bearerAuth: []
       responses:
@@ -1322,10 +2024,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/analytics/demographics:
     get:
-      operationId: leads_analytics_demographics_retrieve
+      operationId: leads_analytics_demographics
       description: |-
         GET /api/v1/leads/analytics/demographics
 
@@ -1333,8 +2061,9 @@ paths:
           period=today|this_week|this_month|this_year
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Lead demographics analytics
       tags:
-      - leads
+      - Lead Analytics
       security:
       - bearerAuth: []
       responses:
@@ -1343,18 +2072,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/analytics/revenue-pipeline:
     get:
-      operationId: leads_analytics_revenue_pipeline_retrieve
+      operationId: leads_analytics_revenue_pipeline
       description: |-
         GET /api/v1/leads/analytics/revenue-pipeline
 
         Query params (optional):
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Revenue pipeline analytics
       tags:
-      - leads
+      - Lead Analytics
       security:
       - bearerAuth: []
       responses:
@@ -1363,10 +2119,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/analytics/revenue-summary:
     get:
-      operationId: leads_analytics_revenue_summary_retrieve
+      operationId: leads_analytics_revenue_summary
       description: |-
         GET /api/v1/leads/analytics/revenue-summary
 
@@ -1374,8 +2156,9 @@ paths:
           period=today|this_week|this_month|this_year
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Revenue summary analytics
       tags:
-      - leads
+      - Lead Analytics
       security:
       - bearerAuth: []
       responses:
@@ -1384,18 +2167,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/analytics/sales-funnel:
     get:
-      operationId: leads_analytics_sales_funnel_retrieve
+      operationId: leads_analytics_sales_funnel
       description: |-
         GET /api/v1/leads/analytics/sales-funnel
 
         Query params (optional):
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Sales funnel analytics
       tags:
-      - leads
+      - Lead Analytics
       security:
       - bearerAuth: []
       responses:
@@ -1404,18 +2214,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/analytics/sales-team:
     get:
-      operationId: leads_analytics_sales_team_retrieve
+      operationId: leads_analytics_sales_team
       description: |-
         GET /api/v1/leads/analytics/sales-team
 
         Query params (optional):
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Sales team performance analytics
       tags:
-      - leads
+      - Lead Analytics
       security:
       - bearerAuth: []
       responses:
@@ -1424,10 +2261,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/analytics/users-leads-kpi:
     get:
-      operationId: leads_analytics_users_leads_kpi_retrieve
+      operationId: leads_analytics_users_kpi
       description: |-
         GET /api/v1/leads/analytics/users-leads-kpi
 
@@ -1437,8 +2300,9 @@ paths:
           period=today|this_week|this_month|this_year
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Users leads KPI analytics
       tags:
-      - leads
+      - Lead Analytics
       security:
       - bearerAuth: []
       responses:
@@ -1447,10 +2311,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/leads/analytics/users-revenue-kpi:
     get:
-      operationId: leads_analytics_users_revenue_kpi_retrieve
+      operationId: leads_analytics_revenue_kpi
       description: |-
         GET /api/v1/leads/analytics/users-revenue-kpi
 
@@ -1460,8 +2350,9 @@ paths:
           period=today|this_week|this_month|this_year
           start_date=YYYY-MM-DD
           end_date=YYYY-MM-DD
+      summary: Users revenue KPI analytics
       tags:
-      - leads
+      - Lead Analytics
       security:
       - bearerAuth: []
       responses:
@@ -1470,6 +2361,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Lead'
+              examples:
+                LeadResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    reference: LD-2024-001
+                    name: ABC Corporation
+                    contact_person: Jane Smith
+                    contact_phone: '+254700000000'
+                    contact_email: jane@abc.co.ke
+                    lead_type: corporate
+                    gender: F
+                    lead_category:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: New Business
+                    source:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: Cold Call
+                    partner: null
+                    products:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: TV Spot 30s
+                    status: New Lead
+                    node: capture
+                    created_at: '2024-01-15T08:00:00Z'
+                    updated_at: '2024-01-15T08:00:00Z'
+                  summary: Lead response
           description: ''
   /api/v1/partners:
     get:
@@ -1485,6 +2402,7 @@ paths:
         - create: Create a new partner
         - update: Update a partner
         - destroy: Delete a partner
+      summary: List partners
       parameters:
       - name: page
         required: false
@@ -1499,7 +2417,7 @@ paths:
         schema:
           type: integer
       tags:
-      - partners
+      - Partners
       security:
       - bearerAuth: []
       responses:
@@ -1508,17 +2426,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedPartnerList'
+              examples:
+                PartnerResponse:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      name: XYZ Agency
+                      partner_type:
+                        id: uuid
+                        name: Agency
+                      industry:
+                        id: uuid
+                        name: Advertising
+                      status: active
+                      services:
+                      - id: uuid
+                        name: TV Advertising
+                      contacts:
+                      - id: uuid
+                        name: Alice Wambui
+                        email: alice@xyz.co.ke
+                        phone: '+254711000000'
+                        preferred_contact_method: email
+                      created_at: '2024-01-10T08:00:00Z'
+                      updated_at: '2024-01-10T08:00:00Z'
+                  summary: Partner response
           description: ''
     post:
       operationId: partners_create
       description: Create a new partner
+      summary: Create partner
       tags:
-      - partners
+      - Partners
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PartnerRequest'
+            examples:
+              CreatePartner:
+                value:
+                  name: XYZ Agency
+                  partner_type_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  industry_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  services_ids:
+                  - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  contacts:
+                  - name: Alice Wambui
+                    email: alice@xyz.co.ke
+                    phone: '+254711000000'
+                    preferred_contact_method: email
+                summary: Create partner
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/PartnerRequest'
@@ -1534,11 +2495,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Partner'
+              examples:
+                PartnerResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: XYZ Agency
+                    partner_type:
+                      id: uuid
+                      name: Agency
+                    industry:
+                      id: uuid
+                      name: Advertising
+                    status: active
+                    services:
+                    - id: uuid
+                      name: TV Advertising
+                    contacts:
+                    - id: uuid
+                      name: Alice Wambui
+                      email: alice@xyz.co.ke
+                      phone: '+254711000000'
+                      preferred_contact_method: email
+                    created_at: '2024-01-10T08:00:00Z'
+                    updated_at: '2024-01-10T08:00:00Z'
+                  summary: Partner response
           description: ''
   /api/v1/partners/{id}:
     get:
       operationId: partners_retrieve
       description: Retrieve a partner by ID
+      summary: Get partner
       parameters:
       - in: path
         name: id
@@ -1548,7 +2534,7 @@ paths:
         description: A UUID string identifying this Partner.
         required: true
       tags:
-      - partners
+      - Partners
       security:
       - bearerAuth: []
       responses:
@@ -1557,10 +2543,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Partner'
+              examples:
+                PartnerResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: XYZ Agency
+                    partner_type:
+                      id: uuid
+                      name: Agency
+                    industry:
+                      id: uuid
+                      name: Advertising
+                    status: active
+                    services:
+                    - id: uuid
+                      name: TV Advertising
+                    contacts:
+                    - id: uuid
+                      name: Alice Wambui
+                      email: alice@xyz.co.ke
+                      phone: '+254711000000'
+                      preferred_contact_method: email
+                    created_at: '2024-01-10T08:00:00Z'
+                    updated_at: '2024-01-10T08:00:00Z'
+                  summary: Partner response
           description: ''
     put:
       operationId: partners_update
       description: Update a partner
+      summary: Update partner
       parameters:
       - in: path
         name: id
@@ -1570,12 +2581,26 @@ paths:
         description: A UUID string identifying this Partner.
         required: true
       tags:
-      - partners
+      - Partners
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PartnerRequest'
+            examples:
+              CreatePartner:
+                value:
+                  name: XYZ Agency
+                  partner_type_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  industry_id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  services_ids:
+                  - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  contacts:
+                  - name: Alice Wambui
+                    email: alice@xyz.co.ke
+                    phone: '+254711000000'
+                    preferred_contact_method: email
+                summary: Create partner
           application/x-www-form-urlencoded:
             schema:
               $ref: '#/components/schemas/PartnerRequest'
@@ -1591,10 +2616,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Partner'
+              examples:
+                PartnerResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: XYZ Agency
+                    partner_type:
+                      id: uuid
+                      name: Agency
+                    industry:
+                      id: uuid
+                      name: Advertising
+                    status: active
+                    services:
+                    - id: uuid
+                      name: TV Advertising
+                    contacts:
+                    - id: uuid
+                      name: Alice Wambui
+                      email: alice@xyz.co.ke
+                      phone: '+254711000000'
+                      preferred_contact_method: email
+                    created_at: '2024-01-10T08:00:00Z'
+                    updated_at: '2024-01-10T08:00:00Z'
+                  summary: Partner response
           description: ''
     delete:
       operationId: partners_destroy
       description: Deactivate a partner
+      summary: Deactivate partner
       parameters:
       - in: path
         name: id
@@ -1604,7 +2654,7 @@ paths:
         description: A UUID string identifying this Partner.
         required: true
       tags:
-      - partners
+      - Partners
       security:
       - bearerAuth: []
       responses:
@@ -1612,8 +2662,9 @@ paths:
           description: No response body
   /api/v1/partners/{id}/campaigns:
     get:
-      operationId: partners_campaigns_retrieve
+      operationId: partners_campaigns
       description: List all campaigns for a partner
+      summary: List partner campaigns
       parameters:
       - in: path
         name: id
@@ -1623,7 +2674,7 @@ paths:
         description: A UUID string identifying this Partner.
         required: true
       tags:
-      - partners
+      - Partners
       security:
       - bearerAuth: []
       responses:
@@ -1632,11 +2683,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Partner'
+              examples:
+                PartnerResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: XYZ Agency
+                    partner_type:
+                      id: uuid
+                      name: Agency
+                    industry:
+                      id: uuid
+                      name: Advertising
+                    status: active
+                    services:
+                    - id: uuid
+                      name: TV Advertising
+                    contacts:
+                    - id: uuid
+                      name: Alice Wambui
+                      email: alice@xyz.co.ke
+                      phone: '+254711000000'
+                      preferred_contact_method: email
+                    created_at: '2024-01-10T08:00:00Z'
+                    updated_at: '2024-01-10T08:00:00Z'
+                  summary: Partner response
           description: ''
   /api/v1/partners/{id}/leads:
     get:
-      operationId: partners_leads_retrieve
+      operationId: partners_leads
       description: List all leads for a partner
+      summary: List partner leads
       parameters:
       - in: path
         name: id
@@ -1646,7 +2722,7 @@ paths:
         description: A UUID string identifying this Partner.
         required: true
       tags:
-      - partners
+      - Partners
       security:
       - bearerAuth: []
       responses:
@@ -1655,11 +2731,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Partner'
+              examples:
+                PartnerResponse:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: XYZ Agency
+                    partner_type:
+                      id: uuid
+                      name: Agency
+                    industry:
+                      id: uuid
+                      name: Advertising
+                    status: active
+                    services:
+                    - id: uuid
+                      name: TV Advertising
+                    contacts:
+                    - id: uuid
+                      name: Alice Wambui
+                      email: alice@xyz.co.ke
+                      phone: '+254711000000'
+                      preferred_contact_method: email
+                    created_at: '2024-01-10T08:00:00Z'
+                    updated_at: '2024-01-10T08:00:00Z'
+                  summary: Partner response
           description: ''
   /api/v1/products:
     get:
       operationId: products_list
       description: Product ViewSet
+      summary: List products
       parameters:
       - name: cursor
         required: false
@@ -1674,7 +2775,7 @@ paths:
         schema:
           type: integer
       tags:
-      - products
+      - Products
       security:
       - bearerAuth: []
       responses:
@@ -1687,8 +2788,9 @@ paths:
     post:
       operationId: products_create
       description: Create a new {self.verbose_name}
+      summary: Create product
       tags:
-      - products
+      - Products
       requestBody:
         content:
           application/json:
@@ -1714,6 +2816,7 @@ paths:
     get:
       operationId: products_retrieve
       description: Retrieve a {self.verbose_name}
+      summary: Get product
       parameters:
       - in: path
         name: id
@@ -1723,7 +2826,7 @@ paths:
         description: A UUID string identifying this Product.
         required: true
       tags:
-      - products
+      - Products
       security:
       - bearerAuth: []
       responses:

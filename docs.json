@@ -20,6 +20,10 @@
           {
             "group": "Getting started",
             "pages": ["index", "authentication"]
+          },
+          {
+            "group": "Infrastructure",
+            "pages": ["database-setup"]
           }
         ]
       },
