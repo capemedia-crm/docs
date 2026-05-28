@@ -606,6 +606,12 @@ paths:
           type: string
           format: uuid
           title: Order Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendToTransitBody'
       responses:
         '200':
           description: Successful Response
@@ -1038,6 +1044,20 @@ paths:
           content:
             application/json:
               schema: {}
+  /internal/cache/clear:
+    post:
+      tags:
+      - Internal
+      summary: Clear Cache
+      description: Force-expire all in-process caches (JWKS + service token). Next
+        request re-fetches.
+      operationId: clear_cache_internal_cache_clear_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
 components:
   schemas:
     AdAssetBulkCreate:
@@ -1212,18 +1232,19 @@ components:
       - APPROVED
       - TRAFFIC_READY
       - STAGED
+      - RUNNING
       - COMPLETED
       - REJECTED
       - CANCELLED
       title: BookingStatus
     CdDecisionBody:
       properties:
-        action:
+        decision:
           type: string
           enum:
           - approve
           - reject
-          title: Action
+          title: Decision
         remarks:
           anyOf:
           - type: string
@@ -1231,7 +1252,7 @@ components:
           title: Remarks
       type: object
       required:
-      - action
+      - decision
       title: CdDecisionBody
     DurationType:
       type: string
@@ -1250,12 +1271,12 @@ components:
       title: HTTPValidationError
     HofDecisionBody:
       properties:
-        action:
+        decision:
           type: string
           enum:
           - approve
           - reject
-          title: Action
+          title: Decision
         remarks:
           anyOf:
           - type: string
@@ -1263,7 +1284,7 @@ components:
           title: Remarks
       type: object
       required:
-      - action
+      - decision
       title: HofDecisionBody
     InventoryItemCreate:
       properties:
@@ -1403,6 +1424,21 @@ components:
       - PER_POST
       - PER_EVENT
       title: PricingUnit
+    SendToTransitBody:
+      properties:
+        start_date:
+          type: string
+          format: date
+          title: Start Date
+        end_date:
+          type: string
+          format: date
+          title: End Date
+      type: object
+      required:
+      - start_date
+      - end_date
+      title: SendToTransitBody
     SlotStatus:
       type: string
       enum:

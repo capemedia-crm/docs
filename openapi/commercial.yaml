@@ -545,53 +545,6 @@ paths:
                     updated_at: '2024-01-15T08:00:00Z'
                   summary: Campaign response
           description: ''
-  /api/v1/campaigns/callback:
-    post:
-      operationId: campaigns_callback
-      description: |-
-        POST /api/v1/campaigns/callback
-
-        Callback from the inventory service.
-      summary: Inventory service callback
-      tags:
-      - Campaigns
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CampaignRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/CampaignRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/CampaignRequest'
-        required: true
-      security:
-      - bearerAuth: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Campaign'
-              examples:
-                CampaignResponse:
-                  value:
-                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                    reference: CP-2024-001
-                    start_date: '2024-02-01'
-                    end_date: '2024-02-28'
-                    status: Campaign In Progress
-                    node: on_air
-                    company_name: ABC Corporation
-                    products:
-                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                      name: TV Spot 30s
-                    created_at: '2024-01-15T08:00:00Z'
-                    updated_at: '2024-01-15T08:00:00Z'
-                  summary: Campaign response
-          description: ''
   /api/v1/cts:
     get:
       operationId: cts_list
