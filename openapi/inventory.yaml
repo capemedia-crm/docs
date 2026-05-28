@@ -508,12 +508,12 @@ paths:
       - Bookings
       summary: Hof Decision
       description: "Head of Finance approves or rejects the booking at node 122.\n\
-        \nApprove saga:\n  1. Commit APPROVED → TRAFFIC_READY to DB.\n  2. Notify\
-        \ commercial-service (hof_approve) — creates Campaign, advances\n     workflow\
-        \ to NODE_STAGE_BOOKING (node 112).\n  3. Notification fails → revert TRAFFIC_READY\
-        \ → APPROVED so HoF can retry.\n\nReject (no inv-service state change):\n\
-        \  1. Notify commercial-service (hof_reject) — workflow routes back to\n \
-        \    NODE_SIGNED_SHEET_UPLOAD (node 120) for re-upload and re-approval."
+        \nApprove:\n  1. Commit APPROVED → TRAFFIC_READY.\n  2. Notify commercial-service\
+        \ (hof_approve) — creates Campaign, advances\n     workflow to NODE_STAGE_BOOKING\
+        \ (node 112).\n  3. Notification fails → revert TRAFFIC_READY → APPROVED so\
+        \ HoF can retry.\n\nReject (no inv-service state change):\n  1. Notify commercial-service\
+        \ (hof_reject) — workflow routes back to\n     NODE_SIGNED_SHEET_UPLOAD (node\
+        \ 120) for re-upload and re-approval."
       operationId: hof_decision_api_v1_bookings__order_id__hof_decision_post
       security:
       - HTTPBearer: []
