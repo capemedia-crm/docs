@@ -38,6 +38,10 @@
       {
         "tab": "User",
         "openapi": "/openapi/user.yaml"
+      },
+      {
+        "tab": "Inventory",
+        "openapi": "/openapi/inventory.yaml"
       }
     ],
     "global": {

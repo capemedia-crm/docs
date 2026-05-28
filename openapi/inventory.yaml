@@ -1,0 +1,1485 @@
+openapi: 3.1.0
+info:
+  title: Cape Digi - Inventory Service
+  description: Ad inventory catalog, rate cards, booking orders, campaign tracking,
+    ad asset management, and commercial transmission scheduling.
+  version: 1.0.0
+paths:
+  /api/v1/inventory/categories:
+    get:
+      tags:
+      - Inventory
+      summary: Get Categories
+      description: Return the static category taxonomy — useful for dynamic dropdowns
+        in the frontend.
+      operationId: get_categories_api_v1_inventory_categories_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/v1/inventory:
+    get:
+      tags:
+      - Inventory
+      summary: List Inventory
+      operationId: list_inventory_api_v1_inventory_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: platform
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/Platform'
+          - type: 'null'
+          title: Platform
+      - name: category
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+      - name: is_active
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          default: true
+          title: Is Active
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Inventory
+      summary: Create Inventory Item
+      operationId: create_inventory_item_api_v1_inventory_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItemCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/inventory/{item_id}:
+    get:
+      tags:
+      - Inventory
+      summary: Get Inventory Item
+      operationId: get_inventory_item_api_v1_inventory__item_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Item Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - Inventory
+      summary: Update Inventory Item
+      operationId: update_inventory_item_api_v1_inventory__item_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Item Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItemUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Inventory
+      summary: Delete Inventory Item
+      operationId: delete_inventory_item_api_v1_inventory__item_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: item_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Item Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings:
+    post:
+      tags:
+      - Bookings
+      summary: Create Booking
+      operationId: create_booking_api_v1_bookings_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingOrderCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Bookings
+      summary: List Bookings
+      operationId: list_bookings_api_v1_bookings_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: lead_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Lead Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/BookingStatus'
+          - type: 'null'
+          title: Status
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}:
+    get:
+      tags:
+      - Bookings
+      summary: Get Booking
+      operationId: get_booking_api_v1_bookings__order_id__get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/lines:
+    post:
+      tags:
+      - Bookings
+      summary: Add Line
+      operationId: add_line_api_v1_bookings__order_id__lines_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingLineCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/lines/{line_id}:
+    delete:
+      tags:
+      - Bookings
+      summary: Remove Line
+      operationId: remove_line_api_v1_bookings__order_id__lines__line_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      - name: line_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Line Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/approve:
+    post:
+      tags:
+      - Bookings
+      summary: Approve Booking
+      operationId: approve_booking_api_v1_bookings__order_id__approve_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/reject:
+    post:
+      tags:
+      - Bookings
+      summary: Reject Booking
+      operationId: reject_booking_api_v1_bookings__order_id__reject_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingRejectBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/cancel:
+    post:
+      tags:
+      - Bookings
+      summary: Cancel Booking
+      operationId: cancel_booking_api_v1_bookings__order_id__cancel_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/signed-document:
+    patch:
+      tags:
+      - Bookings
+      summary: Link Signed Document
+      description: "Attach the client-signed booking sheet to the order.\n\nCalled\
+        \ directly by the Business Executive after receiving the signed sheet\nfrom\
+        \ the client. Saga pattern:\n  1. Set BookingOrder.signed_document_id and\
+        \ log BOOKING_SHEET_LINKED.\n  2. Notify commercial-service to advance the\
+        \ workflow from\n     NODE_SIGNED_SHEET_UPLOAD to GATE_CD_APPROVAL.\n  3.\
+        \ If notification fails → unset signed_document_id so the operator can retry."
+      operationId: link_signed_document_api_v1_bookings__order_id__signed_document_patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LinkSignedDocumentBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/hof-decision:
+    post:
+      tags:
+      - Bookings
+      summary: Hof Decision
+      description: "Head of Finance approves or rejects the booking at node 122.\n\
+        \nApprove saga:\n  1. Commit APPROVED → TRAFFIC_READY to DB.\n  2. Notify\
+        \ commercial-service (hof_approve) — creates Campaign, advances\n     workflow\
+        \ to NODE_STAGE_BOOKING (node 112).\n  3. Notification fails → revert TRAFFIC_READY\
+        \ → APPROVED so HoF can retry.\n\nReject (no inv-service state change):\n\
+        \  1. Notify commercial-service (hof_reject) — workflow routes back to\n \
+        \    NODE_SIGNED_SHEET_UPLOAD (node 120) for re-upload and re-approval."
+      operationId: hof_decision_api_v1_bookings__order_id__hof_decision_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HofDecisionBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/cd-decision:
+    post:
+      tags:
+      - Bookings
+      summary: Cd Decision
+      description: "Commercial Director approves or rejects the booking sheet at GATE_CD_APPROVAL.\n\
+        \nNeither path changes BookingOrder.status — the CD decision is a gate on\
+        \ the\ncommercial-service workflow only. inv-service writes an audit log entry\
+        \ so the\nback-office can see the decision and any remarks.\n\nApprove: log\
+        \ CD_APPROVED → notify commercial-service (cd_approve).\nReject:  log CD_REJECTED\
+        \ → notify commercial-service (cd_reject).\n         Workflow routes back\
+        \ to NODE_SIGNED_SHEET_UPLOAD for re-upload."
+      operationId: cd_decision_api_v1_bookings__order_id__cd_decision_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CdDecisionBody'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/send-to-transit:
+    post:
+      tags:
+      - Bookings
+      summary: Send To Transit
+      description: "Mark a booking STAGED after verifying every line has a document-linked\
+        \ asset.\n\nSaga pattern — mirrors commercial-service → inv-service:\n  1.\
+        \ Commit STAGED to DB.\n  2. Notify commercial-service (with exponential-backoff\
+        \ retry on transient errors).\n  3. If notification still fails after all\
+        \ retries → compensate by reverting\n     STAGED → APPROVED so the operator\
+        \ can retry without data corruption."
+      operationId: send_to_transit_api_v1_bookings__order_id__send_to_transit_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/approval-log:
+    get:
+      tags:
+      - Bookings
+      summary: Get Approval Log
+      operationId: get_approval_log_api_v1_bookings__order_id__approval_log_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/lines/{line_id}/assets/bulk:
+    post:
+      tags:
+      - Ad Assets
+      summary: Bulk Create Assets
+      operationId: bulk_create_assets_api_v1_bookings__order_id__lines__line_id__assets_bulk_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      - name: line_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Line Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdAssetBulkCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/lines/{line_id}/assets:
+    get:
+      tags:
+      - Ad Assets
+      summary: List Line Assets
+      operationId: list_line_assets_api_v1_bookings__order_id__lines__line_id__assets_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      - name: line_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Line Id
+      - name: cursor
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Cursor
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          default: 50
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/assets:
+    get:
+      tags:
+      - Ad Assets
+      summary: List Order Assets
+      description: All assets across every line of a booking — used by Send to Transit.
+      operationId: list_order_assets_api_v1_bookings__order_id__assets_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/bookings/{order_id}/lines/{line_id}/assets/{asset_id}:
+    patch:
+      tags:
+      - Ad Assets
+      summary: Update Asset
+      operationId: update_asset_api_v1_bookings__order_id__lines__line_id__assets__asset_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      - name: line_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Line Id
+      - name: asset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Asset Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdAssetUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Ad Assets
+      summary: Delete Asset
+      operationId: delete_asset_api_v1_bookings__order_id__lines__line_id__assets__asset_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Order Id
+      - name: line_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Line Id
+      - name: asset_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Asset Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/scheduler:
+    get:
+      tags:
+      - Scheduler
+      summary: Get Daily Schedule
+      description: Return the MCR transmission schedule and summary stats for a given
+        date.
+      operationId: get_daily_schedule_api_v1_scheduler_get
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: scheduled_date
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date
+          description: Date in YYYY-MM-DD format
+          title: Scheduled Date
+        description: Date in YYYY-MM-DD format
+      - name: booking_order_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Booking Order Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - $ref: '#/components/schemas/SlotStatus'
+          - type: 'null'
+          title: Status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Scheduler
+      summary: Add Slot
+      description: Add a transmission slot to the MCR schedule.
+      operationId: add_slot_api_v1_scheduler_post
+      security:
+      - HTTPBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransmissionSlotCreate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/scheduler/{slot_id}:
+    patch:
+      tags:
+      - Scheduler
+      summary: Update Slot
+      description: Update notes or status (CANCELLED / MISSED only) on a pending slot.
+      operationId: update_slot_api_v1_scheduler__slot_id__patch
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: slot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Slot Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransmissionSlotUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Scheduler
+      summary: Remove Slot
+      description: Soft-delete a pending slot. Transmitted slots cannot be removed.
+      operationId: remove_slot_api_v1_scheduler__slot_id__delete
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: slot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Slot Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/scheduler/{slot_id}/transmit:
+    post:
+      tags:
+      - Scheduler
+      summary: Mark Transmitted
+      description: 'Confirm a slot has been successfully transmitted / aired.
+
+        Idempotent — safe to call more than once on the same slot.'
+      operationId: mark_transmitted_api_v1_scheduler__slot_id__transmit_post
+      security:
+      - HTTPBearer: []
+      parameters:
+      - name: slot_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Slot Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /health:
+    get:
+      tags:
+      - Health
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    AdAssetBulkCreate:
+      properties:
+        assets:
+          items:
+            $ref: '#/components/schemas/AdAssetCreate'
+          type: array
+          minItems: 1
+          title: Assets
+      type: object
+      required:
+      - assets
+      title: AdAssetBulkCreate
+    AdAssetCreate:
+      properties:
+        name:
+          type: string
+          title: Name
+        asset_type:
+          $ref: '#/components/schemas/AssetType'
+        document_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Document Id
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      required:
+      - name
+      - asset_type
+      title: AdAssetCreate
+    AdAssetUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        asset_type:
+          anyOf:
+          - $ref: '#/components/schemas/AssetType'
+          - type: 'null'
+        document_id:
+          anyOf:
+          - type: string
+            format: uuid
+          - type: 'null'
+          title: Document Id
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      title: AdAssetUpdate
+    AssetType:
+      type: string
+      enum:
+      - TVC
+      - RADIO_SPOT
+      - DIGITAL_REEL
+      - SOCIAL_POST
+      - ARTICLE
+      - BANNER
+      - SQUEEZEBACK
+      - LIVE_INTERVIEW
+      - OTHER
+      title: AssetType
+    BookingLineCreate:
+      properties:
+        inventory_item_id:
+          type: string
+          format: uuid
+          title: Inventory Item Id
+        platform:
+          $ref: '#/components/schemas/Platform'
+        description:
+          type: string
+          title: Description
+        daily_count:
+          type: integer
+          minimum: 1.0
+          title: Daily Count
+          default: 1
+        duration_type:
+          $ref: '#/components/schemas/DurationType'
+          default: WEEKS
+        duration_count:
+          type: integer
+          minimum: 1.0
+          title: Duration Count
+          default: 1
+        start_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Start Date
+        end_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: End Date
+        negotiated_rate:
+          anyOf:
+          - type: number
+            minimum: 0.0
+          - type: string
+          title: Negotiated Rate
+        is_value_add:
+          type: boolean
+          title: Is Value Add
+          default: false
+        requires_production:
+          type: boolean
+          title: Requires Production
+          default: false
+      type: object
+      required:
+      - inventory_item_id
+      - platform
+      - description
+      - negotiated_rate
+      title: BookingLineCreate
+    BookingOrderCreate:
+      properties:
+        lead_id:
+          type: string
+          format: uuid
+          title: Lead Id
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        requires_production:
+          type: boolean
+          title: Requires Production
+          default: false
+        lines:
+          items:
+            $ref: '#/components/schemas/BookingLineCreate'
+          type: array
+          minItems: 1
+          title: Lines
+      type: object
+      required:
+      - lead_id
+      - lines
+      title: BookingOrderCreate
+    BookingRejectBody:
+      properties:
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+      type: object
+      title: BookingRejectBody
+    BookingStatus:
+      type: string
+      enum:
+      - DRAFT
+      - PENDING_APPROVAL
+      - APPROVED
+      - TRAFFIC_READY
+      - STAGED
+      - COMPLETED
+      - REJECTED
+      - CANCELLED
+      title: BookingStatus
+    CdDecisionBody:
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+          title: Action
+        remarks:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Remarks
+      type: object
+      required:
+      - action
+      title: CdDecisionBody
+    DurationType:
+      type: string
+      enum:
+      - DAYS
+      - WEEKS
+      title: DurationType
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HofDecisionBody:
+      properties:
+        action:
+          type: string
+          enum:
+          - approve
+          - reject
+          title: Action
+        remarks:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Remarks
+      type: object
+      required:
+      - action
+      title: HofDecisionBody
+    InventoryItemCreate:
+      properties:
+        platform:
+          $ref: '#/components/schemas/Platform'
+        category:
+          type: string
+          title: Category
+        name:
+          type: string
+          title: Name
+        pricing_unit:
+          $ref: '#/components/schemas/PricingUnit'
+          default: PER_WEEK
+        slot_start:
+          anyOf:
+          - type: string
+            format: time
+          - type: 'null'
+          title: Slot Start
+        slot_end:
+          anyOf:
+          - type: string
+            format: time
+          - type: 'null'
+          title: Slot End
+        rate_card_price:
+          anyOf:
+          - type: number
+            minimum: 0.0
+          - type: string
+          title: Rate Card Price
+        duration_seconds:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Duration Seconds
+        inclusions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Inclusions
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      type: object
+      required:
+      - platform
+      - category
+      - name
+      - rate_card_price
+      title: InventoryItemCreate
+    InventoryItemUpdate:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+        pricing_unit:
+          anyOf:
+          - $ref: '#/components/schemas/PricingUnit'
+          - type: 'null'
+        slot_start:
+          anyOf:
+          - type: string
+            format: time
+          - type: 'null'
+          title: Slot Start
+        slot_end:
+          anyOf:
+          - type: string
+            format: time
+          - type: 'null'
+          title: Slot End
+        rate_card_price:
+          anyOf:
+          - type: number
+            minimum: 0.0
+          - type: string
+          - type: 'null'
+          title: Rate Card Price
+        duration_seconds:
+          anyOf:
+          - type: integer
+            minimum: 1.0
+          - type: 'null'
+          title: Duration Seconds
+        inclusions:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Inclusions
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        is_active:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Is Active
+      type: object
+      title: InventoryItemUpdate
+    LinkSignedDocumentBody:
+      properties:
+        document_id:
+          type: string
+          format: uuid
+          title: Document Id
+      type: object
+      required:
+      - document_id
+      title: LinkSignedDocumentBody
+    Platform:
+      type: string
+      enum:
+      - TV
+      - RADIO
+      - DIGITAL
+      title: Platform
+    PricingUnit:
+      type: string
+      enum:
+      - PER_WEEK
+      - PER_INSERT
+      - PER_DAY
+      - PER_POST
+      - PER_EVENT
+      title: PricingUnit
+    SlotStatus:
+      type: string
+      enum:
+      - PENDING
+      - TRANSMITTED
+      - MISSED
+      - CANCELLED
+      title: SlotStatus
+    TransmissionSlotCreate:
+      properties:
+        scheduled_date:
+          type: string
+          format: date
+          title: Scheduled Date
+        time_slot:
+          type: string
+          title: Time Slot
+        booking_order_id:
+          type: string
+          format: uuid
+          title: Booking Order Id
+        ad_asset_id:
+          type: string
+          format: uuid
+          title: Ad Asset Id
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      required:
+      - scheduled_date
+      - time_slot
+      - booking_order_id
+      - ad_asset_id
+      title: TransmissionSlotCreate
+    TransmissionSlotUpdate:
+      properties:
+        status:
+          anyOf:
+          - $ref: '#/components/schemas/SlotStatus'
+          - type: 'null'
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      title: TransmissionSlotUpdate
+      description: 'Only notes and cancellable/missed status are patchable.
+
+        TRANSMITTED is set exclusively via POST /scheduler/{id}/transmit
+
+        to preserve the transmitted_by / transmitted_at audit trail.'
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    HTTPBearer:
+      type: http
+      scheme: bearer
